@@ -6,7 +6,7 @@ resource "aws_vpc" "main" {
 
 resource "aws_subnet" "public" {
   vpc_id                  = aws_vpc.main.id
-  cidr_block              = var.public_subnet_cidr
+  cidr_block              = var.internal_cidr
   availability_zone       = var.availability_zone
   map_public_ip_on_launch = true
 }
@@ -19,7 +19,7 @@ resource "aws_subnet" "private" {
 }
 
 resource "aws_security_group" "bosh" {
-  name   = "bosh"
+  name   = var.security_group_name
   vpc_id = aws_vpc.main.id
 }
 
