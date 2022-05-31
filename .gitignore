@@ -3,3 +3,5 @@
 .envrc
 *.tfstate.backup
 secret/
+creds.yml
+state.json
