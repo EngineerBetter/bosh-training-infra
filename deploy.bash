@@ -7,6 +7,9 @@ bosh create-env ~/workspace/bosh-deployment/bosh.yml \
     -o ~/workspace/bosh-deployment/aws/cpi.yml \
     -o ~/workspace/bosh-deployment/external-ip-with-registry-not-recommended.yml \
     -o ~/workspace/bosh-deployment/bosh-lite.yml \
+    -o ~/workspace/bosh-deployment/jumpbox-user.yml \
+    -o ~/workspace/bosh-deployment/uaa.yml \
+    -o ~/workspace/bosh-deployment/credhub.yml \
     -v director_name=bosh-training \
     -v internal_cidr="$TF_VAR_internal_cidr" \
     -v internal_gw=10.0.0.1 \

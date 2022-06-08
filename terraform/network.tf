@@ -30,7 +30,8 @@ resource "aws_security_group_rule" "ssh" {
   to_port           = 22
   protocol          = "tcp"
   cidr_blocks = [
-    "${var.cs_office_ip}/32"
+    "${var.cs_office_ip}/32",
+    "3.8.37.24/29"
   ]
 }
 
