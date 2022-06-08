@@ -1,7 +1,16 @@
 ---
+resources:
+- name: training-infra
+  type: git
+  icon: github
+  source:
+    uri: https://github.com/EngineerBetter/training-infra
+
 jobs:
 - name: hello
   plan:
+  - get: training-infra
+    trigger: true
   - task: hello
     config:
       platform: linux
