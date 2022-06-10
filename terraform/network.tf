@@ -31,7 +31,8 @@ resource "aws_security_group_rule" "ssh" {
   protocol          = "tcp"
   cidr_blocks = [
     "${var.cs_office_ip}/32",
-    "3.8.37.24/29"
+    "3.8.37.24/29",
+    "86.152.174.112/32" # Tom 
   ]
 }
 
@@ -42,7 +43,20 @@ resource "aws_security_group_rule" "agent" {
   to_port           = 6868
   protocol          = "tcp"
   cidr_blocks = [
-    "${var.cs_office_ip}/32"
+    "${var.cs_office_ip}/32",
+    "86.152.174.112/32" # Tom 
+  ]
+}
+
+resource "aws_security_group_rule" "uaa-credhub" {
+  security_group_id = aws_security_group.bosh.id
+  type              = "ingress"
+  from_port         = 8443
+  to_port           = 8444
+  protocol          = "tcp"
+  cidr_blocks = [
+    "${var.cs_office_ip}/32",
+    "86.152.174.112/32" # Tom
   ]
 }
 
@@ -53,7 +67,8 @@ resource "aws_security_group_rule" "director" {
   to_port           = 25555
   protocol          = "tcp"
   cidr_blocks = [
-    "${var.cs_office_ip}/32"
+    "${var.cs_office_ip}/32",
+    "86.152.174.112/32" # Tom 
   ]
 }
 
