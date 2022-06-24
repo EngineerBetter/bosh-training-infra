@@ -1,7 +1,7 @@
 *.tfstate
 .terraform/
 .envrc
-*.tfstate.backup
+*.tfstate.*backup
 secret/
 creds.yml
 state.json

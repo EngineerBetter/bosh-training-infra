@@ -1,18 +1,16 @@
-resource "aws_vpc" "main" {
-  cidr_block           = var.vpc_cidr
-  enable_dns_support   = true
-  enable_dns_hostnames = true
+data "aws_vpc" "main" {
+  id = var.vpc_id
 }
 
 resource "aws_subnet" "public" {
-  vpc_id                  = aws_vpc.main.id
+  vpc_id                  = data.aws_vpc.main.id
   cidr_block              = var.internal_cidr
   availability_zone       = var.availability_zone
   map_public_ip_on_launch = true
 }
 
 resource "aws_subnet" "private" {
-  vpc_id                  = aws_vpc.main.id
+  vpc_id                  = data.aws_vpc.main.id
   cidr_block              = var.private_subnet_cidr
   availability_zone       = var.availability_zone
   map_public_ip_on_launch = false
@@ -20,7 +18,7 @@ resource "aws_subnet" "private" {
 
 resource "aws_security_group" "bosh" {
   name   = var.security_group_name
-  vpc_id = aws_vpc.main.id
+  vpc_id = data.aws_vpc.main.id
 }
 
 resource "aws_security_group_rule" "ssh" {
@@ -143,14 +141,4 @@ resource "aws_security_group_rule" "egress_https" {
 
 resource "aws_eip" "bosh" {
   vpc = true
-}
-
-resource "aws_internet_gateway" "main" {
-  vpc_id = aws_vpc.main.id
-}
-
-resource "aws_route" "main" {
-  route_table_id         = aws_vpc.main.main_route_table_id
-  destination_cidr_block = "0.0.0.0/0"
-  gateway_id             = aws_internet_gateway.main.id
 }
