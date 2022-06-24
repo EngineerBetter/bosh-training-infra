@@ -17,7 +17,7 @@ resources:
   type: terraform
   icon: terraform
   source:
-    backend_backend_config:
+    backend_config:
       bucket: ((bucket_name))
       key: terraform/shared
       region: ((region))
