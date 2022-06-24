@@ -98,24 +98,6 @@ resource "aws_security_group_rule" "director" {
   ]
 }
 
-resource "aws_security_group_rule" "internal_tcp" {
-  security_group_id = var.security_group_id
-  type              = "ingress"
-  from_port         = 0
-  to_port           = 65535
-  protocol          = "tcp"
-  self              = true
-}
-
-resource "aws_security_group_rule" "internal_udp" {
-  security_group_id = var.security_group_id
-  type              = "ingress"
-  from_port         = 0
-  to_port           = 65535
-  protocol          = "udp"
-  self              = true
-}
-
 resource "aws_security_group_rule" "egress_http" {
   security_group_id = var.security_group_id
   type              = "egress"
