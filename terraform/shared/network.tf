@@ -13,3 +13,8 @@ resource "aws_route" "main" {
   destination_cidr_block = "0.0.0.0/0"
   gateway_id             = aws_internet_gateway.main.id
 }
+
+resource "aws_security_group" "bosh" {
+  name   = "bosh"
+  vpc_id = aws_vpc.main.id
+}

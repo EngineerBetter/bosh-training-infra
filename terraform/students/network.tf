@@ -16,13 +16,8 @@ resource "aws_subnet" "private" {
   map_public_ip_on_launch = false
 }
 
-resource "aws_security_group" "bosh" {
-  name   = var.security_group_name
-  vpc_id = data.aws_vpc.main.id
-}
-
 resource "aws_security_group_rule" "ssh" {
-  security_group_id = aws_security_group.bosh.id
+  security_group_id = var.security_group_id
   type              = "ingress"
   from_port         = 22
   to_port           = 22
@@ -36,7 +31,7 @@ resource "aws_security_group_rule" "ssh" {
 }
 
 resource "aws_security_group_rule" "http_ingress" {
-  security_group_id = aws_security_group.bosh.id
+  security_group_id = var.security_group_id
   type              = "ingress"
   from_port         = 80
   to_port           = 80
@@ -50,7 +45,7 @@ resource "aws_security_group_rule" "http_ingress" {
 }
 
 resource "aws_security_group_rule" "https_ingress" {
-  security_group_id = aws_security_group.bosh.id
+  security_group_id = var.security_group_id
   type              = "ingress"
   from_port         = 443
   to_port           = 443
@@ -65,7 +60,7 @@ resource "aws_security_group_rule" "https_ingress" {
 
 
 resource "aws_security_group_rule" "agent" {
-  security_group_id = aws_security_group.bosh.id
+  security_group_id = var.security_group_id
   type              = "ingress"
   from_port         = 6868
   to_port           = 6868
@@ -78,7 +73,7 @@ resource "aws_security_group_rule" "agent" {
 }
 
 resource "aws_security_group_rule" "uaa-credhub" {
-  security_group_id = aws_security_group.bosh.id
+  security_group_id = var.security_group_id
   type              = "ingress"
   from_port         = 8443
   to_port           = 8444
@@ -91,7 +86,7 @@ resource "aws_security_group_rule" "uaa-credhub" {
 }
 
 resource "aws_security_group_rule" "director" {
-  security_group_id = aws_security_group.bosh.id
+  security_group_id = var.security_group_id
   type              = "ingress"
   from_port         = 25555
   to_port           = 25555
@@ -104,7 +99,7 @@ resource "aws_security_group_rule" "director" {
 }
 
 resource "aws_security_group_rule" "internal_tcp" {
-  security_group_id = aws_security_group.bosh.id
+  security_group_id = var.security_group_id
   type              = "ingress"
   from_port         = 0
   to_port           = 65535
@@ -113,7 +108,7 @@ resource "aws_security_group_rule" "internal_tcp" {
 }
 
 resource "aws_security_group_rule" "internal_udp" {
-  security_group_id = aws_security_group.bosh.id
+  security_group_id = var.security_group_id
   type              = "ingress"
   from_port         = 0
   to_port           = 65535
@@ -122,7 +117,7 @@ resource "aws_security_group_rule" "internal_udp" {
 }
 
 resource "aws_security_group_rule" "egress_http" {
-  security_group_id = aws_security_group.bosh.id
+  security_group_id = var.security_group_id
   type              = "egress"
   protocol          = "tcp"
   from_port         = 80
@@ -131,7 +126,7 @@ resource "aws_security_group_rule" "egress_http" {
 }
 
 resource "aws_security_group_rule" "egress_https" {
-  security_group_id = aws_security_group.bosh.id
+  security_group_id = var.security_group_id
   type              = "egress"
   protocol          = "tcp"
   from_port         = 443
