@@ -98,24 +98,6 @@ resource "aws_security_group_rule" "director" {
   ]
 }
 
-resource "aws_security_group_rule" "egress_http" {
-  security_group_id = var.security_group_id
-  type              = "egress"
-  protocol          = "tcp"
-  from_port         = 80
-  to_port           = 80
-  cidr_blocks       = ["0.0.0.0/0"]
-}
-
-resource "aws_security_group_rule" "egress_https" {
-  security_group_id = var.security_group_id
-  type              = "egress"
-  protocol          = "tcp"
-  from_port         = 443
-  to_port           = 443
-  cidr_blocks       = ["0.0.0.0/0"]
-}
-
 resource "aws_eip" "bosh" {
   vpc = true
 }
