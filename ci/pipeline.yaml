@@ -17,6 +17,7 @@ resources:
   type: terraform
   icon: terraform
   source:
+    backend_type: s3
     backend_config:
       bucket: ((bucket_name))
       key: terraform/shared
