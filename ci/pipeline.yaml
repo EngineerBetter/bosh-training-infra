@@ -1,10 +1,10 @@
 ---
-# resource_types:
-# - name: terraform
-#   type: docker-image
-#   source:
-#     repository: ljfranklin/terraform-resource
-#     tag: 1.2.2
+resource_types:
+- name: terraform
+  type: docker-image
+  source:
+    repository: ljfranklin/terraform-resource
+    tag: 1.2.3
 
 resources:
 - name: bosh-training-infra
@@ -13,6 +13,17 @@ resources:
   source:
     uri: https://github.com/EngineerBetter/bosh-training-infra
 
+- name: shared-terraform-state
+  type: terraform
+  icon: terraform
+  source:
+    backend_backend_config:
+      bucket: ((bucket_name))
+      key: terraform/shared
+      region: ((region))
+      access_key: ((concourse_ci_s3_access_key))
+      secret_key: ((concourse_ci_s3_secret_key))
+
 jobs:
 - name: set-pipeline
   plan:
@@ -20,17 +31,14 @@ jobs:
     trigger: true
   - set_pipeline: training-infra
     file: bosh-training-infra/ci/pipeline.yaml
-- name: hello
+    var_files: [bosh-training-infra/vars.yaml]
+
+- name: terraform-shared
   plan:
   - get: bosh-training-infra
     passed: [set-pipeline]
     trigger: true
-  - task: hello
-    config:
-      platform: linux
-      image_resource:
-        type: registry-image
-        source: { repository: busybox }
-      run:
-        path: echo
-        args: ["Hello, World!"]
+  - put: shared-terraform-state
+    params:
+      terraform_source: bosh-training-infra/terraform/shared
+      vars: { region: ((region)) }
