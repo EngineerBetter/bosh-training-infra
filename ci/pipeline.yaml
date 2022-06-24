@@ -43,7 +43,9 @@ jobs:
   - put: shared-terraform-state
     params:
       terraform_source: bosh-training-infra/terraform/shared
-      vars: { region: ((region)) }
+      vars:
+        region: ((region))
+        cs_office_ip: ((cs_office_ip))
       env:
         AWS_ACCESS_KEY_ID: ((concourse_ci_s3_access_key))
         AWS_SECRET_ACCESS_KEY: ((concourse_ci_s3_secret_key))

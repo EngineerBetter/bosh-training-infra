@@ -54,3 +54,58 @@ resource "aws_security_group_rule" "egress_https" {
   to_port           = 443
   cidr_blocks       = ["0.0.0.0/0"]
 }
+
+resource "aws_security_group_rule" "ssh" {
+  security_group_id = aws_security_group.bosh.id
+  type              = "ingress"
+  from_port         = 22
+  to_port           = 22
+  protocol          = "tcp"
+  cidr_blocks       = ["${var.cs_office_ip}/32"]
+}
+
+resource "aws_security_group_rule" "http_ingress" {
+  security_group_id = aws_security_group.bosh.id
+  type              = "ingress"
+  from_port         = 80
+  to_port           = 80
+  protocol          = "tcp"
+  cidr_blocks       = ["${var.cs_office_ip}/32"]
+}
+
+resource "aws_security_group_rule" "https_ingress" {
+  security_group_id = aws_security_group.bosh.id
+  type              = "ingress"
+  from_port         = 443
+  to_port           = 443
+  protocol          = "tcp"
+  cidr_blocks       = ["${var.cs_office_ip}/32"]
+}
+
+
+resource "aws_security_group_rule" "agent" {
+  security_group_id = aws_security_group.bosh.id
+  type              = "ingress"
+  from_port         = 6868
+  to_port           = 6868
+  protocol          = "tcp"
+  cidr_blocks       = ["${var.cs_office_ip}/32"]
+}
+
+resource "aws_security_group_rule" "uaa-credhub" {
+  security_group_id = aws_security_group.bosh.id
+  type              = "ingress"
+  from_port         = 8443
+  to_port           = 8444
+  protocol          = "tcp"
+  cidr_blocks       = ["${var.cs_office_ip}/32"]
+}
+
+resource "aws_security_group_rule" "director" {
+  security_group_id = aws_security_group.bosh.id
+  type              = "ingress"
+  from_port         = 25555
+  to_port           = 25555
+  protocol          = "tcp"
+  cidr_blocks       = ["${var.cs_office_ip}/32"]
+}

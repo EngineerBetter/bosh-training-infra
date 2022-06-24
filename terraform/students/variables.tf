@@ -13,7 +13,3 @@ variable "private_subnet_cidr" {
 }
 
 variable "internal_cidr" {}
-
-variable "cs_office_ip" {
-  default = "212.140.222.159"
-}
