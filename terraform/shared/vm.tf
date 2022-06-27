@@ -17,12 +17,12 @@ data "aws_ami" "ubuntu" {
 resource "aws_instance" "bastion" {
   instance_type = "t3.micro"
   subnet_id     = aws_subnet.bastion.id
-  key_name      = aws_key_pair.bosh.key_name
+  key_name      = aws_key_pair.bastion.key_name
   ami           = data.aws_ami.ubuntu.id
 
   tags = {
     "Name" = "bosh-training-bastion"
   }
 
-  security_groups = [aws_security_group.bosh.id]
+  vpc_security_group_ids = [aws_security_group.bosh.id]
 }

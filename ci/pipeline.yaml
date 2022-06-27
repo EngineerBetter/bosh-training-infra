@@ -46,6 +46,9 @@ jobs:
       vars:
         region: ((region))
         cs_office_ip: ((cs_office_ip))
+        key_name: ((key_name))
+        availability_zone: ((region))a
+        public_key: ((bosh-training-key.public_key))
       env:
         AWS_ACCESS_KEY_ID: ((concourse_ci_s3_access_key))
         AWS_SECRET_ACCESS_KEY: ((concourse_ci_s3_secret_key))

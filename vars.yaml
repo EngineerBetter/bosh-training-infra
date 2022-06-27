@@ -1,3 +1,4 @@
 bucket_name: eb-bosh-training-infra
 region: eu-west-2
 cs_office_ip: 212.140.222.159
+key_name: bosh-training-key
