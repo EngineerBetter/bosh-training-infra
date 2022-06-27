@@ -8,11 +8,11 @@ resource "aws_security_group_rule" "ssh" {
   from_port         = 22
   to_port           = 22
   protocol          = "tcp"
-  cidr_blocks       = toset(flatten([for student in var.students: [for ip in student.ips: "${ip}/32"]]))
+  cidr_blocks       = toset(flatten([for student in var.students : [for ip in student.ips : "${ip}/32"]]))
 }
 
 resource "aws_subnet" "students" {
-  for_each = {for student in var.students: student.name => student.subnet_cidr}
+  for_each = { for student in var.students : student.name => student.subnet_cidr }
 
   vpc_id                  = data.aws_vpc.main.id
   cidr_block              = each.value
