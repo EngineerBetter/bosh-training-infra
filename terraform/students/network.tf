@@ -25,7 +25,7 @@ resource "aws_security_group_rule" "ssh" {
   cidr_blocks = [
     "3.8.37.24/29",
     "86.152.174.112/32",
-    "79.67.170.213/32"  # Marcus
+    "79.67.170.213/32" # Marcus
   ]
 }
 
@@ -38,7 +38,7 @@ resource "aws_security_group_rule" "http_ingress" {
   cidr_blocks = [
     "3.8.37.24/29",
     "86.152.174.112/32",
-    "79.67.170.213/32"  # Marcus
+    "79.67.170.213/32" # Marcus
   ]
 }
 
@@ -51,7 +51,7 @@ resource "aws_security_group_rule" "https_ingress" {
   cidr_blocks = [
     "3.8.37.24/29",
     "86.152.174.112/32",
-    "79.67.170.213/32"  # Marcus
+    "79.67.170.213/32" # Marcus
   ]
 }
 
@@ -64,7 +64,7 @@ resource "aws_security_group_rule" "agent" {
   protocol          = "tcp"
   cidr_blocks = [
     "86.152.174.112/32", # Tom
-    "79.67.170.213/32"  # Marcus
+    "79.67.170.213/32"   # Marcus
   ]
 }
 
@@ -76,7 +76,7 @@ resource "aws_security_group_rule" "uaa-credhub" {
   protocol          = "tcp"
   cidr_blocks = [
     "86.152.174.112/32", # Tom
-    "79.67.170.213/32"  # Marcus
+    "79.67.170.213/32"   # Marcus
   ]
 }
 
@@ -88,7 +88,7 @@ resource "aws_security_group_rule" "director" {
   protocol          = "tcp"
   cidr_blocks = [
     "86.152.174.112/32", # Tom
-    "79.67.170.213/32"  # Marcus
+    "79.67.170.213/32"   # Marcus
   ]
 }
 
