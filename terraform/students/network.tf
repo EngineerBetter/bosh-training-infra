@@ -2,6 +2,10 @@ data "aws_vpc" "main" {
   id = var.vpc_id
 }
 
+data "aws_security_group" "main" {
+  id = var.security_group_id
+}
+
 resource "aws_security_group_rule" "ssh" {
   security_group_id = var.security_group_id
   type              = "ingress"
