@@ -3,8 +3,12 @@ provider "aws" {
 
   default_tags {
     tags = {
-      Name        = "bosh-training-marcus"
-      Environment = "bosh-training-marcus"
+      Name        = "bosh-training"
+      Environment = "bosh-training"
     }
   }
+}
+
+terraform {
+  backend "s3" {}
 }
