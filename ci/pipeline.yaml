@@ -49,6 +49,8 @@ jobs:
     var_files: [bosh-training-infra/vars.yaml]
 
 - name: terraform-shared
+  serial: true
+  serial_groups: [infrastructure]
   plan:
   - get: bosh-training-infra
     passed: [set-pipeline]
@@ -67,6 +69,8 @@ jobs:
         AWS_SECRET_ACCESS_KEY: ((concourse_ci_s3_secret_key))
 
 - name: terraform-students
+  serial: true
+  serial_groups: [infrastructure]
   plan:
   - in_parallel:
     - get: bosh-training-infra
