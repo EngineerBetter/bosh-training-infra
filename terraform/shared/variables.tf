@@ -5,3 +5,7 @@ variable "vpc_cidr" {
 }
 
 variable "cs_office_ip" {}
+
+variable "availability_zone" {}
+
+variable "key_name" {}

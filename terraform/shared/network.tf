@@ -61,7 +61,7 @@ resource "aws_security_group_rule" "ssh" {
   from_port         = 22
   to_port           = 22
   protocol          = "tcp"
-  cidr_blocks       = ["${var.cs_office_ip}/32"]
+  cidr_blocks       = ["${var.cs_office_ip}/32", "86.156.62.190/32"]
 }
 
 resource "aws_security_group_rule" "http_ingress" {
@@ -108,4 +108,16 @@ resource "aws_security_group_rule" "director" {
   to_port           = 25555
   protocol          = "tcp"
   cidr_blocks       = ["${var.cs_office_ip}/32"]
+}
+
+resource "aws_eip" "bastion" {
+  vpc      = true
+  instance = aws_instance.bastion.id
+}
+
+resource "aws_subnet" "bastion" {
+  vpc_id                  = aws_vpc.main.id
+  cidr_block              = "10.0.2.0/24"
+  availability_zone       = var.availability_zone
+  map_public_ip_on_launch = true
 }

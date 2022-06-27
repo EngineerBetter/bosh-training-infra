@@ -13,3 +13,7 @@ variable "private_subnet_cidr" {
 }
 
 variable "internal_cidr" {}
+
+# variable "students" {
+#   type = list
+# }

@@ -95,3 +95,13 @@ resource "aws_security_group_rule" "director" {
 resource "aws_eip" "bosh" {
   vpc = true
 }
+
+# resource "aws_eip" "eips" {
+#   for_each = {for student in var.students: student.name => student.name}
+#   vpc      = true
+
+#   tags = {
+#     StudentName = each.value
+#     Environment = "bosh-training-${each.value}"
+#   }
+# }
