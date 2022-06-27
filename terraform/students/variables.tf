@@ -14,6 +14,6 @@ variable "private_subnet_cidr" {
 
 variable "internal_cidr" {}
 
-# variable "students" {
-#   type = list
-# }
+variable "students" {
+  type = list(object({name = string, ips = list(string)}))
+}
