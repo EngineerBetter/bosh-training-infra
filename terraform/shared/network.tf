@@ -64,24 +64,6 @@ resource "aws_security_group_rule" "ssh" {
   cidr_blocks       = ["${var.cs_office_ip}/32"]
 }
 
-resource "aws_security_group_rule" "http_ingress" {
-  security_group_id = aws_security_group.bosh.id
-  type              = "ingress"
-  from_port         = 80
-  to_port           = 80
-  protocol          = "tcp"
-  cidr_blocks       = ["${var.cs_office_ip}/32"]
-}
-
-resource "aws_security_group_rule" "https_ingress" {
-  security_group_id = aws_security_group.bosh.id
-  type              = "ingress"
-  from_port         = 443
-  to_port           = 443
-  protocol          = "tcp"
-  cidr_blocks       = ["${var.cs_office_ip}/32"]
-}
-
 resource "aws_eip" "bastion" {
   vpc      = true
   instance = aws_instance.bastion.id
