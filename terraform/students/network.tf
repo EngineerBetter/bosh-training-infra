@@ -6,13 +6,18 @@ data "aws_security_group" "main" {
   id = var.security_group_id
 }
 
+locals {
+  student_ips  = toset(flatten([for student in var.students : [for ip in student.ips : "${ip}/32"]]))
+  director_ips = [for student in var.students : "${cidrhost(student.subnet_cidr, 6)}/32"]
+}
+
 resource "aws_security_group_rule" "ssh" {
   security_group_id = var.security_group_id
   type              = "ingress"
   from_port         = 22
   to_port           = 22
   protocol          = "tcp"
-  cidr_blocks       = toset(flatten([for student in var.students : [for ip in student.ips : "${ip}/32"]]))
+  cidr_blocks       = local.student_ips
 }
 
 resource "aws_security_group_rule" "egress_agent" {
@@ -21,7 +26,16 @@ resource "aws_security_group_rule" "egress_agent" {
   protocol          = "tcp"
   from_port         = 6868
   to_port           = 6868
-  cidr_blocks       = [for student in var.students : "${cidrhost(student.subnet_cidr, 6)}/32"]
+  cidr_blocks       = local.director_ips
+}
+
+resource "aws_security_group_rule" "egress_uaa" {
+  security_group_id = var.security_group_id
+  type              = "egress"
+  protocol          = "tcp"
+  from_port         = 8443
+  to_port           = 8444
+  cidr_blocks       = local.director_ips
 }
 
 resource "aws_security_group_rule" "egress_director" {
@@ -30,7 +44,7 @@ resource "aws_security_group_rule" "egress_director" {
   protocol          = "tcp"
   from_port         = 25555
   to_port           = 25555
-  cidr_blocks       = [for student in var.students : "${cidrhost(student.subnet_cidr, 6)}/32"]
+  cidr_blocks       = local.director_ips
 }
 
 resource "aws_subnet" "students" {
