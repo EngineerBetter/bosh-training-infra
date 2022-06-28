@@ -2,17 +2,46 @@ platform: linux
 
 image_resource:
   type: registry-image
-  source: { repository: alpine }
+  source: { repository: engineerbetter/pcf-ops }
 
 inputs:
   - name: bosh-deployment
   - name: students-terraform-state
 
+params:
+  AWS_ACCESS_KEY_ID:
+  AWS_SECRET_ACCESS_KEY:
+  DEFAULT_KEY_NAME:
+  PRIVATE_KEY:
+
 run:
-  path: ash
+  path: bash
   args:
   - -euo
   - pipefail
   - -c
   - |
-    cat students-terraform-state/metadata
+    echo "$PRIVATE_KEY" > key.pem
+    chmod key.pem 0400
+
+    jq -c '.students[]' students-terraform-state/metadata | while read student; do
+      bosh create-env bosh-deployment/bosh.yml \
+        --vars-store="creds-$( jq -r '.name' <<< "$student" ).yml" \
+        --state="state-$( jq -r '.name' <<< "$student" ).json" \
+        --ops-file bosh-deployment/aws/cpi.yml \
+        --ops-file bosh-deployment/bosh-lite.yml \
+        --ops-file bosh-deployment/uaa.yml \
+        --ops-file bosh-deployment/credhub.yml \
+        --var director_name="bosh-training-$( jq -r '.name' <<< "$student" )" \
+        --var internal_cidr="$( jq -r '.internal_cidr' <<< "$student" )" \
+        --var internal_gw="$( jq -r '.internal_gw' <<< "$student" )" \
+        --var internal_ip="$( jq -r '.internal_ip' <<< "$student" )" \
+        --var "access_key_id=${AWS_ACCESS_KEY_ID}" \
+        --var "secret_access_key=${AWS_SECRET_ACCESS_KEY}" \
+        --var region="$( jq -r '.region' <<< "$student" )" \
+        --var az="$( jq -r '.az' <<< "$student" )" \
+        --var default_key_name="$DEFAULT_KEY_NAME" \
+        --var default_security_groups="$( jq -r '.default_security_groups' <<< "$student" )" \
+        --var-file private_key=key.pem \
+        --var subnet_id="$( jq -r '.subnet_id' <<< "$student" )"
+    done

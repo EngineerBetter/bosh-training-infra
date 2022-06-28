@@ -111,3 +111,8 @@ jobs:
           - get: students-terraform-state
       - task: create-envs
         file: bosh-training-infra/ci/create-envs.yaml
+        params:
+          AWS_ACCESS_KEY_ID: ((concourse_ci_s3_access_key))
+          AWS_SECRET_ACCESS_KEY: ((concourse_ci_s3_secret_key))
+          DEFAULT_KEY_NAME: ((key_name))
+          PRIVATE_KEY: ((bosh-training-key.private_key))
