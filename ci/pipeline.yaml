@@ -113,7 +113,7 @@ jobs:
         config:
           platform: linux
           image_resource:
-            type: registry_image
+            type: registry-image
             source: { repository: busybox }
           run:
             path: cat
