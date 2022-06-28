@@ -111,10 +111,7 @@ jobs:
       - load_var: students-terraform-outputs
         file: students-terraform-state/metadata
         format: json
-      - across:
-          - var: student
-            values: ((.:students-terraform-outputs.students))
-        task: create-env-((.:student.name))
+      - task: create-envs
         config:
           platform: linux
           image_resource:
@@ -122,4 +119,4 @@ jobs:
             source: { repository: busybox }
           run:
             path: echo
-            args: ["((.:student.subnet_id))"]
+            args: ['((.:students-terraform-outputs.students))']
