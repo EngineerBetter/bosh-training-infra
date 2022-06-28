@@ -16,6 +16,7 @@ resources:
   - name: bosh-deployment
     type: git
     icon: github
+    check_every: 60m
     source:
       uri: https://github.com/cloudfoundry/bosh-deployment
 
