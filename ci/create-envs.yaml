@@ -13,6 +13,7 @@ params:
   AWS_SECRET_ACCESS_KEY:
   DEFAULT_KEY_NAME:
   PRIVATE_KEY:
+  BASTION_IP:
 
 run:
   path: bash
@@ -22,7 +23,9 @@ run:
   - -c
   - |
     echo "$PRIVATE_KEY" > key.pem
-    chmod key.pem 0400
+    chmod 0400 key.pem
+
+    export BOSH_ALL_PROXY="ssh+socks5://ubuntu@$BASTION_IP:22?private-key=key.pem"
 
     jq -c '.students[]' students-terraform-state/metadata | while read student; do
       bosh create-env bosh-deployment/bosh.yml \
