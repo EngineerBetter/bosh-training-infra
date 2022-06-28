@@ -115,6 +115,8 @@ jobs:
           image_resource:
             type: registry-image
             source: { repository: busybox }
+          inputs:
+            - name: students-terraform-state
           run:
             path: cat
             args: [students-terraform-state/metadata]
