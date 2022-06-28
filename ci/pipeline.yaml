@@ -109,9 +109,6 @@ jobs:
             trigger: true
             passed: [terraform-students]
           - get: students-terraform-state
-      - load_var: students-terraform-outputs
-        file: students-terraform-state/metadata
-        format: json
       - task: create-envs
         config:
           platform: linux
@@ -119,5 +116,5 @@ jobs:
             type: registry_image
             source: { repository: busybox }
           run:
-            path: echo
-            args: ['((.:students-terraform-outputs.students))']
+            path: cat
+            args: [students-terraform-state/metadata]
