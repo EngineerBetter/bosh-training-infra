@@ -110,13 +110,4 @@ jobs:
             passed: [terraform-students]
           - get: students-terraform-state
       - task: create-envs
-        config:
-          platform: linux
-          image_resource:
-            type: registry-image
-            source: { repository: busybox }
-          inputs:
-            - name: students-terraform-state
-          run:
-            path: cat
-            args: [students-terraform-state/metadata]
+        file: bosh-training-infra/ci/create-envs.yaml

@@ -1,0 +1,18 @@
+platform: linux
+
+image_resource:
+  type: registry-image
+  source: { repository: alpine }
+
+inputs:
+  - name: bosh-deployment
+  - name: students-terraform-state
+
+run:
+  path: ash
+  args:
+  - -euo
+  - pipefail
+  - -c
+  - |
+    cat students-terraform-state/metadata
