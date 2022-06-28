@@ -1,94 +1,125 @@
 ---
 resource_types:
-- name: terraform
-  type: docker-image
-  source:
-    repository: ljfranklin/terraform-resource
-    tag: 1.2.3
+  - name: terraform
+    type: docker-image
+    source:
+      repository: ljfranklin/terraform-resource
+      tag: 1.2.3
 
 resources:
-- name: bosh-training-infra
-  type: git
-  icon: github
-  source:
-    uri: https://github.com/EngineerBetter/bosh-training-infra
+  - name: bosh-training-infra
+    type: git
+    icon: github
+    source:
+      uri: https://github.com/EngineerBetter/bosh-training-infra
 
-- name: shared-terraform-state
-  type: terraform
-  icon: terraform
-  source:
-    backend_type: s3
-    env_name: default
-    backend_config:
-      bucket: ((bucket_name))
-      key: terraform/shared
-      region: ((region))
-      access_key: ((concourse_ci_s3_access_key))
-      secret_key: ((concourse_ci_s3_secret_key))
+  - name: bosh-deployment
+    type: git
+    icon: github
+    source:
+      uri: https://github.com/cloudfoundry/bosh-deployment
 
-- name: students-terraform-state
-  type: terraform
-  icon: terraform
-  source:
-    backend_type: s3
-    env_name: default
-    backend_config:
-      bucket: ((bucket_name))
-      key: terraform/students
-      region: ((region))
-      access_key: ((concourse_ci_s3_access_key))
-      secret_key: ((concourse_ci_s3_secret_key))
+  - name: shared-terraform-state
+    type: terraform
+    icon: terraform
+    source:
+      backend_type: s3
+      env_name: default
+      backend_config:
+        bucket: ((bucket_name))
+        key: terraform/shared
+        region: ((region))
+        access_key: ((concourse_ci_s3_access_key))
+        secret_key: ((concourse_ci_s3_secret_key))
+
+  - name: students-terraform-state
+    type: terraform
+    icon: terraform
+    source:
+      backend_type: s3
+      env_name: default
+      backend_config:
+        bucket: ((bucket_name))
+        key: terraform/students
+        region: ((region))
+        access_key: ((concourse_ci_s3_access_key))
+        secret_key: ((concourse_ci_s3_secret_key))
 
 jobs:
-- name: set-pipeline
-  plan:
-  - get: bosh-training-infra
-    trigger: true
-  - set_pipeline: training-infra
-    file: bosh-training-infra/ci/pipeline.yaml
-    var_files: [bosh-training-infra/vars.yaml]
+  - name: set-pipeline
+    plan:
+      - get: bosh-training-infra
+        trigger: true
+      - set_pipeline: training-infra
+        file: bosh-training-infra/ci/pipeline.yaml
+        var_files: [bosh-training-infra/vars.yaml]
 
-- name: terraform-shared
-  serial: true
-  serial_groups: [infrastructure]
-  plan:
-  - get: bosh-training-infra
-    passed: [set-pipeline]
-    trigger: true
-  - put: shared-terraform-state
-    params:
-      terraform_source: bosh-training-infra/terraform/shared
-      vars:
-        region: ((region))
-        cs_office_ip: ((cs_office_ip))
-        key_name: ((key_name))
-        availability_zone: ((region))a
-        public_key: ((bosh-training-key.public_key))
-      env:
-        AWS_ACCESS_KEY_ID: ((concourse_ci_s3_access_key))
-        AWS_SECRET_ACCESS_KEY: ((concourse_ci_s3_secret_key))
+  - name: terraform-shared
+    serial: true
+    serial_groups: [infrastructure]
+    plan:
+      - get: bosh-training-infra
+        passed: [set-pipeline]
+        trigger: true
+      - put: shared-terraform-state
+        params:
+          terraform_source: bosh-training-infra/terraform/shared
+          vars:
+            region: ((region))
+            cs_office_ip: ((cs_office_ip))
+            key_name: ((key_name))
+            availability_zone: ((region))a
+            public_key: ((bosh-training-key.public_key))
+          env:
+            AWS_ACCESS_KEY_ID: ((concourse_ci_s3_access_key))
+            AWS_SECRET_ACCESS_KEY: ((concourse_ci_s3_secret_key))
 
-- name: terraform-students
-  serial: true
-  serial_groups: [infrastructure]
-  plan:
-  - in_parallel:
-    - get: bosh-training-infra
-      passed: [terraform-shared]
-      trigger: true
-    - get: shared-terraform-state
-  - load_var: shared-terraform-outputs
-    file: shared-terraform-state/metadata
-    format: json
-  - put: students-terraform-state
-    params:
-      terraform_source: bosh-training-infra/terraform/students
-      vars:
-        region: ((region))
-        vpc_id: ((.:shared-terraform-outputs.vpc_id))
-        security_group_id: ((.:shared-terraform-outputs.security_group_id))
-        availability_zone: ((region))a
-      var_files: [bosh-training-infra/students.auto.tfvars]
-      env:
-        AWS_ACCESS_KEY_ID: ((concourse_ci_s3_access_key))
-        AWS_SECRET_ACCESS_KEY: ((concourse_ci_s3_secret_key))
+  - name: terraform-students
+    serial: true
+    serial_groups: [infrastructure]
+    plan:
+      - in_parallel:
+          - get: bosh-training-infra
+            passed: [terraform-shared]
+            trigger: true
+          - get: shared-terraform-state
+      - load_var: shared-terraform-outputs
+        file: shared-terraform-state/metadata
+        format: json
+      - put: students-terraform-state
+        params:
+          terraform_source: bosh-training-infra/terraform/students
+          vars:
+            region: ((region))
+            vpc_id: ((.:shared-terraform-outputs.vpc_id))
+            security_group_id: ((.:shared-terraform-outputs.security_group_id))
+            availability_zone: ((region))a
+          var_files: [bosh-training-infra/students.auto.tfvars]
+          env:
+            AWS_ACCESS_KEY_ID: ((concourse_ci_s3_access_key))
+            AWS_SECRET_ACCESS_KEY: ((concourse_ci_s3_secret_key))
+
+  - name: create-student-envs
+    serial: true
+    plan:
+      - in_parallel:
+          - get: bosh-deployment
+          - get: bosh-training-infra
+            trigger: true
+            passed: [terraform-students]
+          - get: students-terraform-state
+      - load_var: students-terraform-outputs
+        file: students-terraform-state/metadata
+        format: json
+      - across:
+          - var: student
+            values: ((.:students-terraform-outputs.students))
+        task: create-env-((.:student.name))
+        config:
+          platform: linux
+          image_resource:
+            type: registry_image
+            source: { repository: busybox }
+          run:
+            path: echo
+            args: ["((.:student.subnet_id))"]
