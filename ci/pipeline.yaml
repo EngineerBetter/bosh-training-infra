@@ -105,6 +105,7 @@ jobs:
             vpc_id: ((.:shared-terraform-outputs.vpc_id))
             security_group_id: ((.:shared-terraform-outputs.security_group_id))
             availability_zone: ((region))a
+            nat_gateway_route_table: ((.:shared-terraform-outputs.nat_gateway_route_table))
           var_files: [bosh-training-infra/students.auto.tfvars]
           env:
             AWS_ACCESS_KEY_ID: ((concourse_ci_s3_access_key))

@@ -9,3 +9,7 @@ output "vpc_id" {
 output "bastion_ip" {
   value = aws_eip.bastion.public_ip
 }
+
+output "nat_gateway_route_table" {
+  value = aws_route_table.private.id
+}

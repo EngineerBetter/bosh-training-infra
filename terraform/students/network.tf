@@ -58,3 +58,9 @@ resource "aws_subnet" "students" {
     Name = "bosh-training-${each.key}"
   }
 }
+
+resource "aws_route_table_association" "students" {
+  for_each       = aws_subnet.students
+  subnet_id      = each.value.id
+  route_table_id = var.nat_gateway_route_table
+}

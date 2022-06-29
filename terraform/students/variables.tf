@@ -9,3 +9,5 @@ variable "students" {
 }
 
 variable "availability_zone" {}
+
+variable "nat_gateway_route_table" {}

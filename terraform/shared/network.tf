@@ -75,3 +75,22 @@ resource "aws_subnet" "bastion" {
   availability_zone       = var.availability_zone
   map_public_ip_on_launch = true
 }
+
+resource "aws_eip" "bastion-nat" {
+  vpc = true
+}
+
+resource "aws_nat_gateway" "bastion" {
+  allocation_id = aws_eip.bastion-nat.id
+  subnet_id     = aws_subnet.bastion.id
+  depends_on    = [aws_internet_gateway.main]
+}
+
+resource "aws_route_table" "subnet-route-table" {
+  vpc_id = aws_vpc.main.id
+
+  route {
+    cidr_block = "0.0.0.0/0"
+    nat_gateway_id = aws_nat_gateway.bastion
+  }
+}
