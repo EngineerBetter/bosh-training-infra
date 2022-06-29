@@ -86,7 +86,7 @@ resource "aws_nat_gateway" "bastion" {
   depends_on    = [aws_internet_gateway.main]
 }
 
-resource "aws_route_table" "subnet-route-table" {
+resource "aws_route_table" "private" {
   vpc_id = aws_vpc.main.id
 
   route {
