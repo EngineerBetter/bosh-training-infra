@@ -1,0 +1,25 @@
+platform: linux
+
+image_resource:
+  source: { repository: alpine }
+  type: registry-image
+
+inputs:
+  - name: target
+
+outputs:
+  - name: compressed
+
+run:
+  path: ash
+  dir: target
+  args:
+    - -euo
+    - pipefail
+    - -c
+    - |
+      tar \
+        --gzip \
+        --verbose \
+        --file ../compressed/archive.tgz \
+        --create ((files))
