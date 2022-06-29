@@ -7,6 +7,10 @@ image_resource:
 inputs:
   - name: bosh-deployment
   - name: students-terraform-state
+  - name: director-states
+
+outputs:
+  - name: director-states
 
 params:
   AWS_ACCESS_KEY_ID:
@@ -29,8 +33,8 @@ run:
 
     jq -c '.students[]' students-terraform-state/metadata | while read student; do
       bosh create-env bosh-deployment/bosh.yml \
-        --vars-store="creds-$( jq -r '.name' <<< "$student" ).yml" \
-        --state="state-$( jq -r '.name' <<< "$student" ).json" \
+        --vars-store="director-states/creds-$( jq -r '.name' <<< "$student" ).yml" \
+        --state="director-states/state-$( jq -r '.name' <<< "$student" ).json" \
         --ops-file bosh-deployment/aws/cpi.yml \
         --ops-file bosh-deployment/bosh-lite.yml \
         --ops-file bosh-deployment/uaa.yml \
