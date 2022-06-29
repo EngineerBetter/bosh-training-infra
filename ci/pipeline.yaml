@@ -139,6 +139,6 @@ jobs:
               file: bosh-training-infra/ci/compress.yaml
               input_mapping: { target: director-states }
               vars: { files: creds-*.yml state-*.json }
-            - put: director-state
+            - put: director-states
               params: { file: compressed/archive.tgz }
               get_params: { unpack: true }
