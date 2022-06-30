@@ -68,6 +68,8 @@ resources:
       bucket: ((bucket_name))
       path: student-packs
       region: ((region))
+      options:
+      - "--quiet"
 
 jobs:
   - name: set-pipeline
