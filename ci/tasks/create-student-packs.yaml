@@ -1,0 +1,28 @@
+platform: linux
+
+image_resource:
+  type: registry-image
+  source: { repository: engineerbetter/pcf-ops }
+
+inputs:
+  - name: bosh-training-infra
+  - name: shared-terraform-state
+  - name: students-terraform-state
+  - name: student-packs
+
+outputs:
+  - name: student-packs
+
+
+params:
+  PRIVATE_KEY:
+  BASTION_IP:
+
+run:
+  path: bash
+  args:
+    - -euo
+    - pipefail
+    - -c
+    - |
+      echo "PRIVATE_KEY=${PRIVATE_KEY}" > student-packs/test.env
