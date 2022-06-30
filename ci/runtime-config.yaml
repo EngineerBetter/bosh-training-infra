@@ -29,11 +29,11 @@ run:
 
       jq -c '.students[]' students-terraform-state/metadata | while read student; do
         student_name="$( jq -r '.name' <<< "$student" )"
-        certs="$( printf "%s\n%s" "$( bosh interpolate "creds-${student_name}.yml" --path /director_ssl/certificate )" "$( bosh interpolate "creds-${student_name}.yml" --path /uaa_ssl/certificate )" )"
+        certs="$( printf "%s\n%s" "$( bosh interpolate "director-states/creds-${student_name}.yml" --path /director_ssl/certificate )" "$( bosh interpolate "director-states/creds-${student_name}.yml" --path /uaa_ssl/certificate )" )"
 
         bosh \
           update-runtime-config \
-          --client-secret="$( bosh interpolate "creds-${student_name}.yml" --path /admin_password )" \
+          --client-secret="$( bosh interpolate "director-states/creds-${student_name}.yml" --path /admin_password )" \
           --environment="$( jq -r '.internal_ip' <<< "$student" )" \
           --ca-cert="$certs" \
           bosh-training-infra/runtime-config.yaml
