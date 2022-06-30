@@ -169,6 +169,9 @@ jobs:
         - get: shared-terraform-state
         - get: students-terraform-state
         - get: student-packs
+      - load_var: shared-terraform-outputs
+        file: shared-terraform-state/metadata
+        format: json
       - task: create-packs
         file: bosh-training-infra/ci/tasks/create-student-packs.yaml
         params:
