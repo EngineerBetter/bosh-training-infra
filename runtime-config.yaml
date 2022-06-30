@@ -1,0 +1,11 @@
+releases:
+  - name: bosh-dns
+    version: 1.32.0
+    url: "https://bosh.io/d/github.com/cloudfoundry/bosh-dns-release?v=1.32.0"
+    sha1: 6c1eb59d24869560fb44fb71d957052fb569467c
+
+addons:
+  - name: bosh-dns
+    jobs:
+      - name: bosh-dns
+        release: bosh-dns
