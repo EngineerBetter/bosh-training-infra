@@ -71,6 +71,8 @@ resources:
       options:
       - "--quiet"
       - "--only-show-errors"
+      - "--exclude '*'"
+      - "--include 'student-packs/*'"
 
 jobs:
   - name: set-pipeline
