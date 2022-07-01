@@ -68,7 +68,6 @@ resources:
       bucket: ((bucket_name))
       region: ((region))
       options:
-      - "--quiet"
       - "--only-show-errors"
       - "--exclude '*'"
       - "--include 'student-packs/*.env'"
