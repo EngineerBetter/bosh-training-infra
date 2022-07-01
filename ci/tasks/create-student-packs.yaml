@@ -6,7 +6,6 @@ image_resource:
 
 inputs:
   - name: bosh-training-infra
-  - name: shared-terraform-state
   - name: students-terraform-state
   - name: student-packs
   - name: director-states

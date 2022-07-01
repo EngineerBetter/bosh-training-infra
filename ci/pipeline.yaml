@@ -179,7 +179,9 @@ jobs:
           params:
             unpack: true
         - get: shared-terraform-state
+          passed: [create-student-envs]
         - get: students-terraform-state
+          passed: [create-student-envs]
         - get: student-packs
       - load_var: shared-terraform-outputs
         file: shared-terraform-state/metadata
