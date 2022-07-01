@@ -32,6 +32,9 @@ run:
       jq -c '.students[]' students-terraform-state/metadata | while read student; do
           student_name=$( jq -r '.name' <<< "$student" )
           echo "BOSH_ALL_PROXY=\"ssh+socks5://ubuntu@${BASTION_IP}:22?private-key=bastion-key.pem\"" >> .env
+          echo "BOSH_CLIENT=" >> .env
+          echo "BOSH_CLIENT_SECRET=" >> .env
+          echo "BOSH_ENVIRONMENT=" >> .env
           echo "BOSH_CA_CERT=\"$(bosh interpolate director-states/creds-${student_name}.yml --path=/director_ssl/ca)\"" >> .env
           tar -zcvf student-packs/student-packs/${student_name}.tgz bastion-key.pem .env
           rm .env
