@@ -174,10 +174,11 @@ jobs:
         - get: bosh-training-infra
           trigger: true
           passed: [create-student-envs]
+        - get: director-states
+          passed: [create-student-envs]
         - get: shared-terraform-state
         - get: students-terraform-state
         - get: student-packs
-        - get: director-states
       - load_var: shared-terraform-outputs
         file: shared-terraform-state/metadata
         format: json
