@@ -71,7 +71,7 @@ resources:
       options:
       - "--only-show-errors"
       - "--exclude '*'"
-      - "--include '*.env'"
+      - "--include 'student-packs/*.env'"
 
 jobs:
   - name: set-pipeline
