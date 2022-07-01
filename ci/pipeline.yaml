@@ -185,5 +185,3 @@ jobs:
           PRIVATE_KEY: ((bosh-training-key.private_key))
           BASTION_IP: ((.:shared-terraform-outputs.bastion_ip))
       - put: student-packs
-        params:
-          file: student-packs/test.env
