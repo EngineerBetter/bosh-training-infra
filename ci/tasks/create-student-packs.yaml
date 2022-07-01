@@ -26,8 +26,10 @@ run:
     - -c
     - |
       mkdir -p student-packs/student-packs
-
+      echo "$PRIVATE_KEY" > bastion-key.pem
+      chmod 0400 bastion-key.pem
       jq -c '.students[]' students-terraform-state/metadata | while read student; do
-          echo "BOSH_ALL_PROXY=\"ssh+socks5://ubuntu@${BASTION_IP}:22?private-key=bastion-key.pem\"" \
-            >> student-packs/student-packs/$( jq -r '.name' <<< "$student" ).env
+          echo "BOSH_ALL_PROXY=\"ssh+socks5://ubuntu@${BASTION_IP}:22?private-key=bastion-key.pem\"" >> .env
+            tar -zcvf student-packs/student-packs/$( jq -r '.name' <<< "$student" ).tgz bastion-key.pem .env
+            rm .env
       done
