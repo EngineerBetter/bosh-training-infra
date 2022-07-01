@@ -25,4 +25,6 @@ run:
     - pipefail
     - -c
     - |
-      echo "PRIVATE_KEY=${PRIVATE_KEY}" > student-packs/test.env
+      # Create student-packs dir if doesn't exist in bucket 
+      mkdir -p student-packs/student-packs
+      echo "PRIVATE_KEY=${PRIVATE_KEY}" > student-packs/student-packs/test.env
