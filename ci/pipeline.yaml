@@ -177,6 +177,7 @@ jobs:
         - get: shared-terraform-state
         - get: students-terraform-state
         - get: student-packs
+        - get: director-states
       - load_var: shared-terraform-outputs
         file: shared-terraform-state/metadata
         format: json
