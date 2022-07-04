@@ -1,0 +1,8 @@
+- path: /resource_pools/name=vms/cloud_properties?
+  type: replace
+  value:
+    availability_zone: ((az))
+    ephemeral_disk:
+      size: 25000
+      type: gp3
+    instance_type: t3.large
