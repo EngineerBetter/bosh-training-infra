@@ -113,7 +113,8 @@ jobs:
             trigger: true
           - get: shared-terraform-state
           - get: students-terraform-state
-            output_planfile: true
+            params:
+              output_planfile: true
       - load_var: shared-terraform-outputs
         file: shared-terraform-state/metadata
         format: json
