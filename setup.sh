@@ -14,5 +14,5 @@ eval "$(cat .env)"
 
 if [ ! $(pgrep ssh) ]
 then
-    ssh -4 -D 12345 -fNC $BASTION_USER@$BASTION_HOST -i $BASTION_KEY_LOCATION
+    ssh -4 -D 12345 -fNC $BASTION_USER@$BASTION_HOST -i $BASTION_KEY_LOCATION &
 fi
