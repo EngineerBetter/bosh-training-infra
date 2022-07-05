@@ -40,6 +40,7 @@ run:
         --ops-file bosh-deployment/bosh-lite.yml \
         --ops-file bosh-deployment/uaa.yml \
         --ops-file bosh-deployment/credhub.yml \
+        --ops-file bosh-deployment/jumpbox-user.yml \
         --ops-file bosh-training-infra/aws-t3-large.yml \
         --var director_name="bosh-training-$( jq -r '.name' <<< "$student" )" \
         --var internal_cidr="$( jq -r '.internal_cidr' <<< "$student" )" \
