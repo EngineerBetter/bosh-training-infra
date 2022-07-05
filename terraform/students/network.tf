@@ -20,6 +20,15 @@ resource "aws_security_group_rule" "ssh" {
   cidr_blocks       = local.student_ips
 }
 
+resource "aws_security_group_rule" "egress_ssh" {
+  security_group_id = var.security_group_id
+  type              = "egress"
+  protocol          = "tcp"
+  from_port         = 22
+  to_port           = 22
+  cidr_blocks       = local.director_ips
+}
+
 resource "aws_security_group_rule" "egress_agent" {
   security_group_id = var.security_group_id
   type              = "egress"
