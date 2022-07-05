@@ -28,6 +28,7 @@ run:
       mkdir -p student-packs/student-packs
       echo "$PRIVATE_KEY" > bastion-key.pem
       chmod 0400 bastion-key.pem
+      cp bosh-training-infra/setup.sh ./setup.sh
       jq -c '.students[]' students-terraform-state/metadata | while read student; do
           student_name=$( jq -r '.name' <<< "$student" )
           student_ip=$( jq -r '.internal_ip' <<< "$student" )
@@ -38,6 +39,6 @@ run:
           echo "export BOSH_CLIENT_SECRET=\"$(bosh interpolate director-states/creds-${student_name}.yml --path=/admin_password)\"" >> .env
           echo "export BOSH_ENVIRONMENT=\"${student_ip}\"" >> .env
           echo "export BOSH_CA_CERT=\"$(bosh interpolate director-states/creds-${student_name}.yml --path=/director_ssl/ca)\"" >> .env
-          tar -zcvf student-packs/student-packs/${student_name}.tgz bastion-key.pem .env bosh-training-infra/setup.sh
+          tar -zcvf student-packs/student-packs/${student_name}.tgz bastion-key.pem .env setup.sh
           rm .env
       done
