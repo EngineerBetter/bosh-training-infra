@@ -2,6 +2,10 @@
 
 Welcome!! This repository contains the resources and pipeline for setting up the training infrastructure and environments for students to participate in the BOSH Training.
 
+# Architecture
+
+![Infra](./bosh-training-infra.svg)
+
 ## Adding a student
 
 To add a student you'll need to add the following entry into the students list stored within the [student.auto.tfvars](./students.auto.tfvars) file.
