@@ -5,6 +5,8 @@ BOSH_SOCKS5_PORT="12346"
 BASTION_KEY_FILE=bastion-key.pem
 BASTION_KEY_LOCATION=$HOME/.ssh/$BASTION_KEY_FILE
 BOSH_USER=vcap
+export NO_PROXY=github.com
+export no_proxy=github.com
 
 mkdir -p $HOME/.ssh
 
