@@ -36,7 +36,7 @@ Once downloaded, each student would need to:
 $ tar zxvf <student-name>.tgz
 
 #### ensure all env variables are set in your shell environment ####
-$ eval "$(cat env_filename)"
+$ eval "$(cat linux_env_filename)"
 
 #### test student credentials work ####
 $ bosh login

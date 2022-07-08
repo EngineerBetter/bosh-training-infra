@@ -24,18 +24,22 @@ run:
     - pipefail
     - -c
     - |
-      env_filename=env_filename
+      linux_env_filename=bosh_env_vars
+      windows_env_filename=${linux_env_filename}.bat
+
       mkdir -p student-packs/student-packs
       cp bosh-training-infra/student-packs/README.md ./
+
       echo "$PRIVATE_KEY" > bosh-key.pem
       chmod 0400 bosh-key.pem
+      
       jq -c '.students[]' students-terraform-state/metadata | while read student; do
           student_name=$( jq -r '.name' <<< "$student" )
           student_ip=$( jq -r '.external_ip' <<< "$student" )
-          echo "export BOSH_CLIENT=\"admin\"" >> env_filename
-          echo "export BOSH_CLIENT_SECRET=\"$(bosh interpolate director-states/creds-${student_name}.yml --path=/admin_password)\"" >> env_filename
-          echo "export BOSH_ENVIRONMENT=\"${student_ip}\"" >> env_filename
-          echo "export BOSH_CA_CERT=\"$(bosh interpolate director-states/creds-${student_name}.yml --path=/director_ssl/ca)\"" >> env_filename
-          tar -zcvf student-packs/student-packs/${student_name}.tgz bosh-key.pem env_filename README.md
-          rm env_filename
+          echo "export BOSH_CLIENT=\"admin\"" >> linux_env_filename
+          echo "export BOSH_CLIENT_SECRET=\"$(bosh interpolate director-states/creds-${student_name}.yml --path=/admin_password)\"" >> linux_env_filename
+          echo "export BOSH_ENVIRONMENT=\"${student_ip}\"" >> linux_env_filename
+          echo "export BOSH_CA_CERT=\"$(bosh interpolate director-states/creds-${student_name}.yml --path=/director_ssl/ca)\"" >> linux_env_filename
+          tar -zcvf student-packs/student-packs/${student_name}.tgz bosh-key.pem linux_env_filename README.md
+          rm linux_env_filename
       done
