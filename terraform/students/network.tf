@@ -69,9 +69,23 @@ resource "aws_subnet" "students" {
 }
 
 resource "aws_eip" "students" {
-  for_each = { for student in var.students : student.name => student.subnet_cidr }
+  for_each = aws_subnet.students
 
   vpc = true
+}
+
+resource "aws_network_interface" "students" {
+  for_each = aws_subnet.students
+
+  subnet_id       = each.value.id
+  security_groups = [var.security_group_id]
+}
+
+resource "aws_eip_association" "students" {
+  count = length(local.student_ips)
+
+  allocation_id        = aws_eip.students[count.index].allocation_id
+  network_interface_id = aws_network_interface.students[count.index].id
 }
 
 resource "aws_route_table_association" "students" {
