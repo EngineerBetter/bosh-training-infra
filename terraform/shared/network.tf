@@ -64,7 +64,7 @@ resource "aws_security_group_rule" "ssh" {
   cidr_blocks       = ["${var.cs_office_ip}/32", "${var.eb_ci_nat_gateway}/32"]
 }
 
-resource "aws_subnet" "nat-subnet" {
+resource "aws_subnet" "bastion" {
   vpc_id                  = aws_vpc.main.id
   cidr_block              = "10.0.0.0/24"
   availability_zone       = var.availability_zone
@@ -77,7 +77,7 @@ resource "aws_eip" "nat-ip" {
 
 resource "aws_nat_gateway" "nat" {
   allocation_id = aws_eip.nat-ip.id
-  subnet_id     = aws_subnet.nat-subnet.id
+  subnet_id     = aws_subnet.bastion.id
   depends_on    = [aws_internet_gateway.main]
 }
 
