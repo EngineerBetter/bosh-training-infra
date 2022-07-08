@@ -74,20 +74,6 @@ resource "aws_eip" "students" {
   vpc = true
 }
 
-resource "aws_network_interface" "students" {
-  for_each = aws_subnet.students
-
-  subnet_id       = each.value.id
-  security_groups = [var.security_group_id]
-}
-
-resource "aws_eip_association" "students" {
-  for_each = aws_subnet.students
-
-  allocation_id        = aws_eip.students[each.key].allocation_id
-  network_interface_id = aws_network_interface.students[each.key].id
-}
-
 resource "aws_route_table_association" "students" {
   for_each       = aws_subnet.students
   subnet_id      = each.value.id
