@@ -1,4 +1,9 @@
 students = [
+  #{ =====EXAMPLE====
+  #  name = "studentn"
+  #  ips = ["their external IP", "tutors external IP"]
+  #  subnet_cidr = "10.0.(n+1).0/24"
+  #},
   {
     name = "marcus"
     ips = ["92.1.171.4", "86.156.62.190"]

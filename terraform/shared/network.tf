@@ -64,33 +64,28 @@ resource "aws_security_group_rule" "ssh" {
   cidr_blocks       = ["${var.cs_office_ip}/32", "${var.eb_ci_nat_gateway}/32"]
 }
 
-resource "aws_eip" "bastion" {
-  vpc      = true
-  instance = aws_instance.bastion.id
-}
-
-resource "aws_subnet" "bastion" {
+resource "aws_subnet" "nat-subnet" {
   vpc_id                  = aws_vpc.main.id
   cidr_block              = "10.0.0.0/24"
   availability_zone       = var.availability_zone
   map_public_ip_on_launch = true
 }
 
-resource "aws_eip" "bastion-nat" {
+resource "aws_eip" "nat-ip" {
   vpc = true
 }
 
-resource "aws_nat_gateway" "bastion" {
-  allocation_id = aws_eip.bastion-nat.id
-  subnet_id     = aws_subnet.bastion.id
+resource "aws_nat_gateway" "nat" {
+  allocation_id = aws_eip.nat-ip.id
+  subnet_id     = aws_subnet.nat-subnet.id
   depends_on    = [aws_internet_gateway.main]
 }
 
-resource "aws_route_table" "private" {
+resource "aws_route_table" "route-table" {
   vpc_id = aws_vpc.main.id
 
   route {
     cidr_block     = "0.0.0.0/0"
-    nat_gateway_id = aws_nat_gateway.bastion.id
+    nat_gateway_id = aws_nat_gateway.nat.id
   }
 }

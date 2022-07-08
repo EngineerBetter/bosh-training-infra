@@ -18,7 +18,6 @@ params:
   AWS_SECRET_ACCESS_KEY:
   DEFAULT_KEY_NAME:
   PRIVATE_KEY:
-  BASTION_IP:
 
 run:
   path: bash
@@ -27,10 +26,8 @@ run:
   - pipefail
   - -c
   - |
-    echo "$PRIVATE_KEY" > key.pem
-    chmod 0400 key.pem
-
-    export BOSH_ALL_PROXY="ssh+socks5://ubuntu@${BASTION_IP}:22?private-key=key.pem"
+    echo "$PRIVATE_KEY" > bosh-key.pem
+    chmod 0400 bosh-key.pem
 
     jq -c '.students[]' students-terraform-state/metadata | while read student; do
       bosh create-env bosh-deployment/bosh.yml \
@@ -40,7 +37,8 @@ run:
         --ops-file bosh-deployment/bosh-lite.yml \
         --ops-file bosh-deployment/uaa.yml \
         --ops-file bosh-deployment/credhub.yml \
-        --ops-file bosh-deployment/jumpbox-user.yml \
+        --ops-file ~/workspace/bosh-deployment/external-ip-with-registry-not-recommended.yml \
+        --ops-file ~/workspace/bosh-deployment/external-ip-not-recommended-uaa.yml \
         --ops-file bosh-training-infra/aws-t3-large.yml \
         --var director_name="bosh-training-$( jq -r '.name' <<< "$student" )" \
         --var internal_cidr="$( jq -r '.internal_cidr' <<< "$student" )" \
@@ -52,6 +50,7 @@ run:
         --var az="$( jq -r '.az' <<< "$student" )" \
         --var default_key_name="$DEFAULT_KEY_NAME" \
         --var default_security_groups="$( jq -r '.default_security_groups' <<< "$student" )" \
-        --var-file private_key=key.pem \
-        --var subnet_id="$( jq -r '.subnet_id' <<< "$student" )"
+        --var-file private_key=bosh-key.pem \
+        --var subnet_id="$( jq -r '.subnet_id' <<< "$student" )" \
+        --var external_ip="$( jq -r '.external_ip' <<< "$student" )"
     done
