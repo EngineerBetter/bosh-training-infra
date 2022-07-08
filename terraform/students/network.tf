@@ -82,10 +82,10 @@ resource "aws_network_interface" "students" {
 }
 
 resource "aws_eip_association" "students" {
-  count = length(local.student_ips)
+  for_each = aws_subnet.students
 
-  allocation_id        = aws_eip.students[count.index].allocation_id
-  network_interface_id = aws_network_interface.students[count.index].id
+  allocation_id        = aws_eip.students[each.key].allocation_id
+  network_interface_id = aws_network_interface.students[each.key].id
 }
 
 resource "aws_route_table_association" "students" {
