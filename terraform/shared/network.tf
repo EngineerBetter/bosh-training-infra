@@ -64,6 +64,33 @@ resource "aws_security_group_rule" "ssh" {
   cidr_blocks       = ["${var.cs_office_ip}/32", "${var.eb_ci_nat_gateway}/32"]
 }
 
+resource "aws_security_group_rule" "mbus" {
+  security_group_id = aws_security_group.bosh.id
+  type              = "ingress"
+  from_port         = 6868
+  to_port           = 6868
+  protocol          = "tcp"
+  cidr_blocks       = ["${var.cs_office_ip}/32", "${var.eb_ci_nat_gateway}/32"]
+}
+
+resource "aws_security_group_rule" "uaa" {
+  security_group_id = aws_security_group.bosh.id
+  type              = "ingress"
+  from_port         = 8443
+  to_port           = 8444
+  protocol          = "tcp"
+  cidr_blocks       = ["${var.cs_office_ip}/32", "${var.eb_ci_nat_gateway}/32"]
+}
+
+resource "aws_security_group_rule" "director" {
+  security_group_id = aws_security_group.bosh.id
+  type              = "ingress"
+  from_port         = 25555
+  to_port           = 25555
+  protocol          = "tcp"
+  cidr_blocks       = ["${var.cs_office_ip}/32", "${var.eb_ci_nat_gateway}/32"]
+}
+
 resource "aws_subnet" "bastion" {
   vpc_id                  = aws_vpc.main.id
   cidr_block              = "10.0.0.0/24"
