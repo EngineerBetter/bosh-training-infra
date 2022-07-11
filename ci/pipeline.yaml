@@ -57,6 +57,7 @@ resources:
       bucket: ((bucket_name))
       region_name: ((region))
       versioned_file: director-states/states.tgz
+      initial_version: "0"
       access_key_id: ((concourse_ci_s3_access_key))
       secret_access_key: ((concourse_ci_s3_secret_key))
     
