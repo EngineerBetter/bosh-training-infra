@@ -28,6 +28,7 @@ run:
   - |
     echo "$PRIVATE_KEY" > bosh-key.pem
     chmod 0400 bosh-key.pem
+    export BOSH_LOG_LEVEL=debug
 
     jq -c '.students[]' students-terraform-state/metadata | while read student; do
       bosh create-env bosh-deployment/bosh.yml \
@@ -40,7 +41,6 @@ run:
         --ops-file bosh-deployment/external-ip-with-registry-not-recommended.yml \
         --ops-file bosh-deployment/external-ip-not-recommended-uaa.yml \
         --ops-file bosh-training-infra/aws-t3-large.yml \
-        --ops-file bosh-training-infra/use-bionic-stemcell.yml \
         --var director_name="bosh-training-$( jq -r '.name' <<< "$student" )" \
         --var internal_cidr="$( jq -r '.internal_cidr' <<< "$student" )" \
         --var internal_gw="$( jq -r '.internal_gw' <<< "$student" )" \
