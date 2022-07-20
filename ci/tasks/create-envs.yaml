@@ -41,6 +41,7 @@ run:
         --ops-file bosh-deployment/external-ip-with-registry-not-recommended.yml \
         --ops-file bosh-deployment/external-ip-not-recommended-uaa.yml \
         --ops-file bosh-training-infra/aws-t3-large.yml \
+        --ops-file bosh-deployment/jumpbox-user.yml \
         --var director_name="bosh-training-$( jq -r '.name' <<< "$student" )" \
         --var internal_cidr="$( jq -r '.internal_cidr' <<< "$student" )" \
         --var internal_gw="$( jq -r '.internal_gw' <<< "$student" )" \
