@@ -28,7 +28,6 @@ run:
   - |
     echo "$PRIVATE_KEY" > bosh-key.pem
     chmod 0400 bosh-key.pem
-    export BOSH_LOG_LEVEL=debug
 
     jq -c '.students[]' students-terraform-state/metadata | while read student; do
       bosh create-env bosh-deployment/bosh.yml \
