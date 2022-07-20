@@ -13,6 +13,10 @@ inputs:
 outputs:
   - name: director-states
 
+caches:
+  # Cache local release compilation to save 5 minutes on each run
+  - dir-path: bosh-home
+
 params:
   AWS_ACCESS_KEY_ID:
   AWS_SECRET_ACCESS_KEY:
@@ -30,7 +34,7 @@ run:
     chmod 0400 bosh-key.pem
 
     jq -c '.students[]' students-terraform-state/metadata | while read student; do
-      bosh create-env bosh-deployment/bosh.yml \
+      HOME=bosh-home bosh create-env bosh-deployment/bosh.yml \
         --vars-store="director-states/creds-$( jq -r '.name' <<< "$student" ).yml" \
         --state="director-states/state-$( jq -r '.name' <<< "$student" ).json" \
         --ops-file bosh-deployment/aws/cpi.yml \
