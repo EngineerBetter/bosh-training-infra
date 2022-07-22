@@ -45,7 +45,7 @@ resource "aws_security_group_rule" "ingress_director_uaa" {
   protocol          = "tcp"
   from_port         = 8443
   to_port           = 8444
-  cidr_blocks       = each.value.public_ip
+  cidr_blocks       = ["${each.value.public_ip}/32"]
 }
 
 resource "aws_security_group_rule" "ingress_lab_application" {
