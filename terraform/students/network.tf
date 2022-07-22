@@ -38,6 +38,16 @@ resource "aws_security_group_rule" "ingress_uaa" {
   cidr_blocks       = local.student_ips
 }
 
+resource "aws_security_group_rule" "ingress_director_uaa" {
+  for_each          = aws_eip.students
+  security_group_id = var.security_group_id
+  type              = "ingress"
+  protocol          = "tcp"
+  from_port         = 8443
+  to_port           = 8444
+  cidr_blocks       = each.value.public_ip
+}
+
 resource "aws_security_group_rule" "ingress_lab_application" {
   security_group_id = var.security_group_id
   type              = "ingress"

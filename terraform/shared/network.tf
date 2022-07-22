@@ -55,6 +55,15 @@ resource "aws_security_group_rule" "egress_https" {
   cidr_blocks       = ["0.0.0.0/0"]
 }
 
+resource "aws_security_group_rule" "egress_uaa" {
+  security_group_id = aws_security_group.bosh.id
+  type              = "egress"
+  protocol          = "tcp"
+  from_port         = 8443
+  to_port           = 8443
+  cidr_blocks       = ["0.0.0.0/0"]
+}
+
 resource "aws_security_group_rule" "ssh" {
   security_group_id = aws_security_group.bosh.id
   type              = "ingress"

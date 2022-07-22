@@ -1,3 +1,0 @@
-- type: replace
-  path: /variables/name=director_ssl/options/alternative_names/-
-  value: 127.0.0.1
