@@ -60,7 +60,7 @@ resources:
       initial_version: "0"
       access_key_id: ((concourse_ci_s3_access_key))
       secret_access_key: ((concourse_ci_s3_secret_key))
-    
+
   - name: student-packs
     type: multi-file-s3
     source:
@@ -70,9 +70,9 @@ resources:
       change_dir_to: student-packs
       region: ((region))
       options:
-      - "--only-show-errors"
-      - "--exclude '*'"
-      - "--include 'student-packs/*.tgz'"
+        - "--only-show-errors"
+        - "--exclude '*'"
+        - "--include 'student-packs/*.tgz'"
 
 jobs:
   - name: set-pipeline
@@ -169,18 +169,18 @@ jobs:
     serial: true
     plan:
       - in_parallel:
-        - get: bosh-training-infra
-          trigger: true
-          passed: [create-student-envs]
-        - get: director-states
-          passed: [create-student-envs]
-          params:
-            unpack: true
-        - get: shared-terraform-state
-          passed: [create-student-envs]
-        - get: students-terraform-state
-          passed: [create-student-envs]
-        - get: student-packs
+          - get: bosh-training-infra
+            trigger: true
+            passed: [create-student-envs]
+          - get: director-states
+            passed: [create-student-envs]
+            params:
+              unpack: true
+          - get: shared-terraform-state
+            passed: [create-student-envs]
+          - get: students-terraform-state
+            passed: [create-student-envs]
+          - get: student-packs
       - load_var: shared-terraform-outputs
         file: shared-terraform-state/metadata
         format: json
@@ -188,5 +188,4 @@ jobs:
         file: bosh-training-infra/ci/tasks/create-student-packs.yaml
         params:
           PRIVATE_KEY: ((bosh-training-key.private_key))
-          BASTION_IP: ((.:shared-terraform-outputs.bastion_ip))
       - put: student-packs
