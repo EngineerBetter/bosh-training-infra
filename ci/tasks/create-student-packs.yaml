@@ -13,7 +13,6 @@ inputs:
 outputs:
   - name: student-packs
 
-
 params:
   PRIVATE_KEY:
 
@@ -36,14 +35,18 @@ run:
       jq -c '.students[]' students-terraform-state/metadata | while read student; do
           student_name=$( jq -r '.name' <<< "$student" )
           student_ip=$( jq -r '.external_ip' <<< "$student" )
-          echo "export BOSH_CLIENT=\"admin\"" >> linux_env_filename
-          echo "export BOSH_CLIENT_SECRET=\"$(bosh interpolate director-states/creds-${student_name}.yml --path=/admin_password)\"" >> linux_env_filename
-          echo "export BOSH_ENVIRONMENT=\"${student_ip}\"" >> linux_env_filename
-          echo "export BOSH_CA_CERT=\"$(bosh interpolate director-states/creds-${student_name}.yml --path=/director_ssl/ca)\"" >> linux_env_filename
-          echo "set BOSH_CLIENT=\"admin\"" >> windows_env_filename
-          echo "set BOSH_CLIENT_SECRET=\"$(bosh interpolate director-states/creds-${student_name}.yml --path=/admin_password)\"" >>windows_env_filename
-          echo "set BOSH_ENVIRONMENT=\"${student_ip}\"" >> windows_env_filename
-          echo "set BOSH_CA_CERT=\"$(bosh interpolate director-states/creds-${student_name}.yml --path=/director_ssl/ca)\"" >> windows_env_filename
-          tar -zcvf student-packs/student-packs/${student_name}.tgz bosh-key.pem linux_env_filename windows_env_filename README.md
-          rm linux_env_filename windows_env_filename
+          cat <<- EOF > $linux_env_filename
+          export BOSH_CLIENT="admin"
+          export BOSH_CLIENT_SECRET="$(bosh interpolate director-states/creds-${student_name}.yml --path=/admin_password)"
+          export BOSH_ENVIRONMENT="${student_ip}"
+          export BOSH_CA_CERT="$(bosh interpolate director-states/creds-${student_name}.yml --path=/director_ssl/ca)"
+          EOF
+
+          cat <<- EOF > $windows_env_filename
+          set BOSH_CLIENT="admin"
+          set BOSH_CLIENT_SECRET="$(bosh interpolate director-states/creds-${student_name}.yml --path=/admin_password)"
+          set BOSH_ENVIRONMENT="${student_ip}"
+          set BOSH_CA_CERT="$(bosh interpolate director-states/creds-${student_name}.yml --path=/director_ssl/ca)"
+          EOF
+          tar -zcvf student-packs/student-packs/${student_name}.tgz bosh-key.pem $linux_env_filename $windows_env_filename README.md
       done
