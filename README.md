@@ -32,13 +32,34 @@ Each student listed in [students file](./students.auto.tfvars) should have an ar
 Once downloaded, each student would need to:
 
 ```commandLine
-#### decompress and unarchive the file ####
+## decompress and unarchive the file
 $ tar zxvf <student-name>.tgz
 
-#### ensure all env variables are set in your shell environment ####
-$ eval "$(cat linux_env_filename)"
+## ensure all env variables
+## are set in your shell environment
+# linux/macos
+$ eval "$(cat bosh_env_vars)"
 
-#### test student credentials work ####
+# windows
+$ call bosh_env_vars.bat
+
+## test student credentials work
 $ bosh login
 Successfully authenticated with UAA
+
+$ bosh env
+Using environment '<ip-address>' as client 'admin'
+
+Name               bosh-training-<student-name>
+UUID               e3957fa4-1471-44a6-9a97-1579c99c64fc
+Version            273.0.0 (00000000)
+Director Stemcell  -/0.3
+CPI                warden_cpi
+Features           config_server: enabled
+                   local_dns: enabled
+                   power_dns: disabled
+                   snapshots: disabled
+User               admin
+
+Succeeded
 ```
