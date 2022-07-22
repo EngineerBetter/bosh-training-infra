@@ -22,42 +22,37 @@ params:
 run:
   path: bash
   args:
-  - -euo
-  - pipefail
-  - -c
-  - |
-    echo "$PRIVATE_KEY" > bosh-key.pem
-    chmod 0400 bosh-key.pem
+    - -euo
+    - pipefail
+    - -c
+    - |
+      echo "$PRIVATE_KEY" > bosh-key.pem
+      chmod 0400 bosh-key.pem
 
-    jq -c '.students[]' students-terraform-state/metadata | while read student; do
-      bosh create-env bosh-deployment/bosh.yml \
-        --vars-store="director-states/creds-$( jq -r '.name' <<< "$student" ).yml" \
-        --state="director-states/state-$( jq -r '.name' <<< "$student" ).json" \
-        --ops-file bosh-deployment/aws/cpi.yml \
-        --ops-file bosh-deployment/bosh-lite.yml \
-        --ops-file bosh-deployment/uaa.yml \
-        --ops-file bosh-deployment/credhub.yml \
-        --ops-file bosh-deployment/external-ip-with-registry-not-recommended.yml \
-        --ops-file bosh-deployment/external-ip-not-recommended-uaa.yml \
-        --ops-file bosh-training-infra/aws-t3-large.yml \
-        --ops-file bosh-deployment/jumpbox-user.yml \
-        --ops-file bosh-deployment/aws/use-bionic.yml \
-        --ops-file bosh-deployment/misc/source-releases/bosh.yml \
-        --ops-file bosh-deployment/misc/source-releases/uaa.yml \
-        --ops-file bosh-deployment/misc/source-releases/credhub.yml \
-        --ops-file bosh-training-infra/use-bionic-stemcell.yml \
-        --ops-file bosh-training-infra/add_loopback_address_to_director_ssl.yml \
-        --var director_name="bosh-training-$( jq -r '.name' <<< "$student" )" \
-        --var internal_cidr="$( jq -r '.internal_cidr' <<< "$student" )" \
-        --var internal_gw="$( jq -r '.internal_gw' <<< "$student" )" \
-        --var internal_ip="$( jq -r '.internal_ip' <<< "$student" )" \
-        --var "access_key_id=${AWS_ACCESS_KEY_ID}" \
-        --var "secret_access_key=${AWS_SECRET_ACCESS_KEY}" \
-        --var region="$( jq -r '.region' <<< "$student" )" \
-        --var az="$( jq -r '.az' <<< "$student" )" \
-        --var default_key_name="$DEFAULT_KEY_NAME" \
-        --var default_security_groups="$( jq -r '.default_security_groups' <<< "$student" )" \
-        --var-file private_key=bosh-key.pem \
-        --var subnet_id="$( jq -r '.subnet_id' <<< "$student" )" \
-        --var external_ip="$( jq -r '.external_ip' <<< "$student" )"
-    done
+      jq -c '.students[]' students-terraform-state/metadata | while read student; do
+        bosh create-env bosh-deployment/bosh.yml \
+          --vars-store="director-states/creds-$( jq -r '.name' <<< "$student" ).yml" \
+          --state="director-states/state-$( jq -r '.name' <<< "$student" ).json" \
+          --ops-file bosh-deployment/aws/cpi.yml \
+          --ops-file bosh-deployment/bosh-lite.yml \
+          --ops-file bosh-deployment/uaa.yml \
+          --ops-file bosh-deployment/credhub.yml \
+          --ops-file bosh-deployment/external-ip-with-registry-not-recommended.yml \
+          --ops-file bosh-deployment/external-ip-not-recommended-uaa.yml \
+          --ops-file bosh-training-infra/aws-t3-large.yml \
+          --ops-file bosh-deployment/jumpbox-user.yml \
+          --ops-file bosh-training-infra/add_loopback_address_to_director_ssl.yml \
+          --var director_name="bosh-training-$( jq -r '.name' <<< "$student" )" \
+          --var internal_cidr="$( jq -r '.internal_cidr' <<< "$student" )" \
+          --var internal_gw="$( jq -r '.internal_gw' <<< "$student" )" \
+          --var internal_ip="$( jq -r '.internal_ip' <<< "$student" )" \
+          --var "access_key_id=${AWS_ACCESS_KEY_ID}" \
+          --var "secret_access_key=${AWS_SECRET_ACCESS_KEY}" \
+          --var region="$( jq -r '.region' <<< "$student" )" \
+          --var az="$( jq -r '.az' <<< "$student" )" \
+          --var default_key_name="$DEFAULT_KEY_NAME" \
+          --var default_security_groups="$( jq -r '.default_security_groups' <<< "$student" )" \
+          --var-file private_key=bosh-key.pem \
+          --var subnet_id="$( jq -r '.subnet_id' <<< "$student" )" \
+          --var external_ip="$( jq -r '.external_ip' <<< "$student" )"
+      done
