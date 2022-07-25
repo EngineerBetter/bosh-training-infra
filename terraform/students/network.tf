@@ -20,6 +20,15 @@ resource "aws_security_group_rule" "ingress_ssh" {
   cidr_blocks       = local.student_ips
 }
 
+resource "aws_security_group_rule" "ingress_cf_api" {
+  security_group_id = var.security_group_id
+  type              = "ingress"
+  protocol          = "tcp"
+  from_port         = 443
+  to_port           = 443
+  cidr_blocks       = local.student_ips
+}
+
 resource "aws_security_group_rule" "ingress_agent" {
   security_group_id = var.security_group_id
   type              = "ingress"
