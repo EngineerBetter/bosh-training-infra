@@ -1,0 +1,18 @@
+platform: linux
+
+image_resource:
+  type: registry-image
+  source: { repository: engineerbetter/pcf-ops }
+
+inputs:
+  - name: bosh-training-infra
+  - name: student-packs
+
+run:
+  path: bash
+  args:
+    - -euo
+    - pipefail
+    - -c
+    - |
+      ls -l student-packs/

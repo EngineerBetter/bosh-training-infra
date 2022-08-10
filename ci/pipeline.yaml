@@ -189,3 +189,14 @@ jobs:
         params:
           PRIVATE_KEY: ((bosh-training-key.private_key))
       - put: student-packs
+
+  - name: test-labs
+    serial: true
+    plan:
+      - in_parallel:
+          - get: bosh-training-infra
+            passed: [create-student-packs]
+          - get: student-packs
+            passed: [create-student-packs]
+      - task: test-lab1
+        file: bosh-training-infra/ci/tasks/test-lab1.yaml
