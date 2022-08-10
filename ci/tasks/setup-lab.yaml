@@ -1,0 +1,23 @@
+platform: linux
+
+image_resource:
+  type: registry-image
+  source: { repository: engineerbetter/pcf-ops }
+
+inputs:
+  - name: bosh-training-infra
+  - name: student-packs
+outputs:
+  - name: env
+
+run:
+  path: bash
+  args:
+    - -euo
+    - pipefail
+    - -c
+    - |
+      cp student-packs/student-packs/cai.tgz .
+      tar zxvf ./cai.tgz
+      cp bosh-key.pem env/
+      cp bosh_env_vars env/

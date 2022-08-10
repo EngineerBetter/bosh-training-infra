@@ -6,7 +6,12 @@ image_resource:
 
 inputs:
   - name: bosh-training-infra
-  - name: student-packs
+  - name: env
+  - name: lab-bosh-deployment
+  - name: lab-cf-deployment
+
+outputs:
+  - name: env
 
 run:
   path: bash
@@ -15,4 +20,39 @@ run:
     - pipefail
     - -c
     - |
-      ls -l student-packs/
+      pushd env
+        eval "$(cat bosh_env_vars)"
+      popd
+      bosh env
+
+      echo "BOSH Pre-requisites"
+      pushd lab-bosh-deployment
+        bosh --non-interactive update-runtime-config \
+          <(bosh interpolate runtime-configs/dns.yml --vars-store bosh-deployment-vars.yml) \
+          --name dns
+      popd
+
+      pushd lab-cf-deployment
+        echo "Preparing to Deploy Cloud Foundry"
+        git checkout tags/v21.4.0
+
+        bosh --non-interactive update-cloud-config iaas-support/bosh-lite/cloud-config.yml
+
+        STEMCELL_VERSION=$(bosh interpolate cf-deployment.yml --path '/stemcells/alias=default/version')
+        echo "STEMCELL_VERSION: ${STEMCELL_VERSION}"
+        bosh upload-stemcell "https://bosh.io/d/stemcells/bosh-warden-boshlite-ubuntu-bionic-go_agent?v=$STEMCELL_VERSION"
+
+        echo "Deploy CF"
+        SYSTEM_DOMAIN=$BOSH_ENVIRONMENT.sslip.io
+        bosh --deployment cf deploy cf-deployment.yml \
+          --non-interactive \
+          --ops-file operations/bosh-lite.yml \
+          --ops-file operations/use-compiled-releases.yml \
+          --ops-file ../bosh-training-infra/operations/use-cert-diego-api.yml \
+          --vars-store cf-deployment-vars.yml \
+          --var system_domain=$SYSTEM_DOMAIN
+
+      popd
+
+      cp lab-bosh-deployment/bosh-deployment-vars.yml env/
+      cp lab-cf-deployment/cf-deployment-vars.yml env/

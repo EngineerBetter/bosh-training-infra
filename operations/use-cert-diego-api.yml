@@ -1,0 +1,4 @@
+---
+- path: /instance_groups/name=diego-api/jobs/name=silk-controller/properties/database/require_ssl
+  type: replace
+  value: false

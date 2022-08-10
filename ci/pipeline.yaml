@@ -25,6 +25,24 @@ resources:
     source:
       uri: https://github.com/cloudfoundry/bosh-deployment
 
+  - name: lab-bosh-deployment
+    type: git
+    icon: github
+    check_every: 60m
+    source:
+      uri: https://github.com/cloudfoundry/bosh-deployment
+      branch: master
+    version:
+      ref: c2430b3ae0509fb2af16996e90b7b14ecb91b438
+
+  - name: lab-cf-deployment
+    type: git
+    icon: github
+    check_every: 60m
+    source:
+      uri: https://github.com/cloudfoundry/cf-deployment
+      branch: main
+
   - name: shared-terraform-state
     type: terraform
     icon: terraform
@@ -198,5 +216,9 @@ jobs:
             passed: [create-student-packs]
           - get: student-packs
             passed: [create-student-packs]
+          - get: lab-bosh-deployment
+          - get: lab-cf-deployment
+      - task: setup-lab
+        file: bosh-training-infra/ci/tasks/setup-lab.yaml
       - task: test-lab1
         file: bosh-training-infra/ci/tasks/test-lab1.yaml
