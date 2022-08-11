@@ -17,7 +17,7 @@ run:
     - pipefail
     - -c
     - |
-      cp student-packs/student-packs/cai.tgz .
-      tar zxvf ./cai.tgz
+      cp student-packs/student-packs/test.tgz .
+      tar zxvf ./test.tgz
       cp bosh-key.pem env/
       cp bosh_env_vars env/
