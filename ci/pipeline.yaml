@@ -122,13 +122,25 @@ jobs:
             AWS_ACCESS_KEY_ID: ((concourse_ci_s3_access_key))
             AWS_SECRET_ACCESS_KEY: ((concourse_ci_s3_secret_key))
 
+  - name: delete-student-envs
+    serial: true
+    plan:
+      - in_parallel:
+          - get: bosh-training-infra
+            trigger: true
+            passed: [terraform-shared]
+          - get: director-states
+            params: { unpack: true }
+      - task: delete-envs
+        file: bosh-training-infra/ci/tasks/delete-envs.yaml
+
   - name: terraform-students
     serial: true
     serial_groups: [infrastructure]
     plan:
       - in_parallel:
           - get: bosh-training-infra
-            passed: [terraform-shared]
+            passed: [delete-student-envs]
             trigger: true
           - get: shared-terraform-state
           - get: students-terraform-state
@@ -162,6 +174,7 @@ jobs:
           - get: students-terraform-state
           - get: shared-terraform-state
           - get: director-states
+            passed: [delete-student-envs]
             params: { unpack: true }
       - load_var: shared-terraform-outputs
         file: shared-terraform-state/metadata

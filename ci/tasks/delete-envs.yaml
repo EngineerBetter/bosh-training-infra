@@ -1,0 +1,47 @@
+platform: linux
+
+image_resource:
+  type: registry-image
+  source: { repository: engineerbetter/pcf-ops }
+
+inputs:
+  - name: bosh-training-infra
+  - name: director-states
+
+run:
+  path: bash
+  args:
+    - -euo
+    - pipefail
+    - -c
+    - |
+      requested_students=$( \
+        jq \
+          --raw-output \
+          '.students[].name' \
+          bosh-training-infra/students.auto.tfvars.json | \
+        sort \
+      )
+      pushd director-states
+        provisioned_students=$( \
+          ls state*.json | \
+          sed 's/state-\(.*\).json/\1/g' | \
+          sort \
+        )
+      popd
+
+      changed_students=$( \
+        echo "${requested_students} ${provisioned_students}" | \
+        tr ' ' '\n' | \
+        sort | \
+        uniq -u \
+      )
+
+      for student in $(echo $changed_students)
+      do
+        echo "checking student: ${student}"
+        if [ -f "director-states/state-${student}.json" ]
+        then
+          echo "${student} student environment should be deleted"
+        fi
+      done
