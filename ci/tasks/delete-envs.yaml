@@ -5,8 +5,19 @@ image_resource:
   source: { repository: engineerbetter/pcf-ops }
 
 inputs:
-  - name: bosh-training-infra
+  - name: bosh-deployment
+  - name: students-terraform-state
   - name: director-states
+  - name: bosh-training-infra
+
+outputs:
+  - name: director-states
+
+params:
+  AWS_ACCESS_KEY_ID:
+  AWS_SECRET_ACCESS_KEY:
+  DEFAULT_KEY_NAME:
+  PRIVATE_KEY:
 
 run:
   path: bash
@@ -15,6 +26,9 @@ run:
     - pipefail
     - -c
     - |
+      echo "$PRIVATE_KEY" > bosh-key.pem
+      chmod 0400 bosh-key.pem
+
       requested_students=$( \
         jq \
           --raw-output \
@@ -29,7 +43,6 @@ run:
           sort \
         )
       popd
-
       changed_students=$( \
         echo "${requested_students} ${provisioned_students}" | \
         tr ' ' '\n' | \
@@ -37,11 +50,46 @@ run:
         uniq -u \
       )
 
-      for student in $(echo $changed_students)
+      for changed_student in $(echo $changed_students)
       do
-        echo "checking student: ${student}"
-        if [ -f "director-states/state-${student}.json" ]
+        echo "checking student: ${changed_student}"
+        if [ -f "director-states/state-${changed_student}.json" ]
         then
-          echo "${student} student environment should be deleted"
+          echo "BOSH Environment for student: ${changed_student}, should be deleted"
+
+          if [ -n "$(jq --arg STUDENT_NAME "$changed_student" '.students[] | select(.name==$STUDENT_NAME)' students-terraform-state/metadata)" ]
+          then
+            jq --arg STUDENT_NAME "$changed_student" '.students[] | select(.name==$STUDENT_NAME)' students-terraform-state/metadata | while read student; do
+              bosh delete-env bosh-deployment/bosh.yml \
+                --vars-store="director-states/creds-$( jq -r '.name' <<< "$student" ).yml" \
+                --state="director-states/state-$( jq -r '.name' <<< "$student" ).json" \
+                --ops-file bosh-deployment/aws/cpi.yml \
+                --ops-file bosh-deployment/bosh-lite.yml \
+                --ops-file bosh-deployment/uaa.yml \
+                --ops-file bosh-deployment/credhub.yml \
+                --ops-file bosh-deployment/external-ip-with-registry-not-recommended.yml \
+                --ops-file bosh-deployment/external-ip-not-recommended-uaa.yml \
+                --ops-file bosh-training-infra/aws-t3-large.yml \
+                --ops-file bosh-deployment/jumpbox-user.yml \
+                --var director_name="bosh-training-$( jq -r '.name' <<< "$student" )" \
+                --var internal_cidr="$( jq -r '.internal_cidr' <<< "$student" )" \
+                --var internal_gw="$( jq -r '.internal_gw' <<< "$student" )" \
+                --var internal_ip="$( jq -r '.internal_ip' <<< "$student" )" \
+                --var "access_key_id=${AWS_ACCESS_KEY_ID}" \
+                --var "secret_access_key=${AWS_SECRET_ACCESS_KEY}" \
+                --var region="$( jq -r '.region' <<< "$student" )" \
+                --var az="$( jq -r '.az' <<< "$student" )" \
+                --var default_key_name="$DEFAULT_KEY_NAME" \
+                --var default_security_groups="$( jq -r '.default_security_groups' <<< "$student" )" \
+                --var-file private_key=bosh-key.pem \
+                --var subnet_id="$( jq -r '.subnet_id' <<< "$student" )" \
+                --var external_ip="$( jq -r '.external_ip' <<< "$student" )"
+            done
+          else
+            echo "Unable to locate environment information for student: ${changed_student} in students terraform state"
+            echo "Deleting creds and state files from director-states for student: ${changed_student}"
+            [ -e "director-states/creds-${changed_student}.yml" ] && rm -f "director-states/creds-${changed_student}.yml"
+            [ -e "director-states/state-${changed_student}.json" ] && rm -f "director-states/state-${changed_student}.json"
+          fi
         fi
       done

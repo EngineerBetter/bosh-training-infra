@@ -129,10 +129,30 @@ jobs:
           - get: bosh-training-infra
             trigger: true
             passed: [terraform-shared]
+          - get: bosh-deployment
           - get: director-states
             params: { unpack: true }
+          - get: shared-terraform-state
+          - get: students-terraform-state
+      - load_var: shared-terraform-outputs
+        file: shared-terraform-state/metadata
+        format: json
       - task: delete-envs
         file: bosh-training-infra/ci/tasks/delete-envs.yaml
+        params:
+          AWS_ACCESS_KEY_ID: ((concourse_ci_s3_access_key))
+          AWS_SECRET_ACCESS_KEY: ((concourse_ci_s3_secret_key))
+          DEFAULT_KEY_NAME: ((key_name))
+          PRIVATE_KEY: ((bosh-training-key.private_key))
+        ensure:
+          do:
+            - task: compress-state
+              file: bosh-training-infra/ci/tasks/compress.yaml
+              input_mapping: { target: director-states }
+              vars: { files: creds-*.yml state-*.json }
+            - put: director-states
+              params: { file: compressed/archive.tgz }
+              get_params: { unpack: true }
 
   - name: terraform-students
     serial: true
