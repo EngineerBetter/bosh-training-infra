@@ -1,0 +1,43 @@
+platform: linux
+
+image_resource:
+  type: registry-image
+  source: { repository: engineerbetter/pcf-ops }
+
+inputs:
+  - name: bosh-training-infra
+  - name: env
+  - name: lab-bosh-deployment
+  - name: lab-cf-deployment
+  - name: lab-spring-music
+
+outputs:
+  - name: env
+
+run:
+  path: bash
+  args:
+    - -euo
+    - pipefail
+    - -c
+    - |
+      pushd env
+        eval "$(cat bosh_env_vars)"
+      popd
+      bosh env
+
+      echo "Push an app to Cloud Foundry"
+      SYSTEM_DOMAIN=$BOSH_ENVIRONMENT.sslip.io
+      cf login \
+        -a https://api.$SYSTEM_DOMAIN \
+        -u admin \
+        -p $(bosh interpolate lab-cf-deployment/cf-deployment-vars.yml --path /cf_admin_password)
+        --skip-ssl-validation
+      cf target
+      cf create-org dev
+      cf create-space dev -o dev
+      cf target -o dev -s dev
+
+      pushd lab-spring-music
+        cf push my-app
+      popd

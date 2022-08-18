@@ -43,6 +43,14 @@ resources:
       uri: https://github.com/cloudfoundry/cf-deployment
       branch: main
 
+  - name: lab-spring-music
+    type: git
+    icon: github
+    check_every: 60m
+    source:
+      uri: https://github.com/EngineerBetter/spring-music
+      branch: master
+
   - name: shared-terraform-state
     type: terraform
     icon: terraform
@@ -251,7 +259,10 @@ jobs:
             passed: [create-student-packs]
           - get: lab-bosh-deployment
           - get: lab-cf-deployment
+          - get: lab-spring-music
       - task: setup-lab
         file: bosh-training-infra/ci/tasks/setup-lab.yaml
       - task: test-lab1
         file: bosh-training-infra/ci/tasks/test-lab1.yaml
+      - task: test-lab3
+        file: bosh-training-infra/ci/tasks/test-lab3.yaml
