@@ -8,21 +8,29 @@ Welcome!! This repository contains the resources and pipeline for setting up the
 
 ## Adding a student
 
-To add a student you'll need to add the following entry into the students list stored within the [student.auto.tfvars](./students.auto.tfvars) file.
+To add a student you'll need to add the following entry into the students list stored within the [student.auto.tfvars.json](./students.auto.tfvars.json) file.
 
 ```
-students = [
-  {
-    name = "test_user1"
-    ips = ["127.0.0.1", "255.255.255.0"]
-    subnet_cidr = "10.0.1.0/24"
-  },
-+ {
-+   name = "test_user2"
-+   ips = [<HOME_IP_ADDRESS>, <OFFICE_IP_ADDRESS>]
-+   subnet_cidr = "10.0.2.0/24"  <---- Increment the third octet since we're using /24
-+ }
-]
+{
+  "students": [
+    {
+      "name": "test_user1",
+      "ips": [
+        "127.0.0.1",
+        "255.255.255.0"
+      ],
+      "subnet_cidr": 10.0.1.0/24"
+    },
++   {
++     "name": "test_user2",
++     "ips": [
++       "<HOME_IP_ADDRESS>",
++       "<ADMIN/TUTOR_IP_ADDRESS>"
++     ],
++     "subnet_cidr": "10.0.2.0/24"  <---- Increment the third octet since we're using /24
++   }
+  ]
+}
 ```
 
 ## Accessing the BOSH Training Environment
