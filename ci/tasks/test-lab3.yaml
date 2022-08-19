@@ -31,7 +31,7 @@ run:
       cf login \
         -a https://api.$SYSTEM_DOMAIN \
         -u admin \
-        -p $(bosh interpolate lab-cf-deployment/cf-deployment-vars.yml --path /cf_admin_password)
+        -p $(bosh interpolate env/cf-deployment-vars.yml --path /cf_admin_password)
         --skip-ssl-validation
       cf target
       cf create-org dev
