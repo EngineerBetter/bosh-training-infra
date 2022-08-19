@@ -21,7 +21,7 @@ run:
       bosh env
 
       echo "Deleting CloudFoundry deployment"
-      bosh --deployment cf delete-deployment --force
+      bosh --non-interactive --deployment cf delete-deployment --force
 
       echo "Deleting configs"
       bosh configs --json | jq -c '.Tables[].Rows[]' | while read config
