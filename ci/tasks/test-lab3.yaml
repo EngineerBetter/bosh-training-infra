@@ -41,3 +41,19 @@ run:
       pushd lab-spring-music
         cf push my-app
       popd
+
+      cp  env/cf-deployment-vars.yml lab-cf-deployment/
+      echo "Scaling diego-cell instances to 2"
+      pushd lab-cf-deployment
+        git checkout tags/v21.4.0
+
+        SYSTEM_DOMAIN=$BOSH_ENVIRONMENT.sslip.io
+        bosh --deployment cf deploy cf-deployment.yml \
+          --non-interactive \
+          --ops-file operations/bosh-lite.yml \
+          --ops-file operations/use-compiled-releases.yml \
+          --ops-file ../bosh-training-infra/operations/use-cert-diego-api.yml \
+          --ops-file ../bosh-training-infra/operations/lab3-diego-cell-scale-up.yml \
+          --vars-store cf-deployment-vars.yml \
+          --var system_domain=$SYSTEM_DOMAIN
+      popd
