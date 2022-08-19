@@ -1,0 +1,43 @@
+platform: linux
+
+image_resource:
+  type: registry-image
+  source: { repository: engineerbetter/pcf-ops }
+
+inputs:
+  - name: bosh-training-infra
+  - name: env
+
+run:
+  path: bash
+  args:
+    - -euo
+    - pipefail
+    - -c
+    - |
+      pushd env
+        eval "$(cat bosh_env_vars)"
+      popd
+      bosh env
+
+      echo "Deleting CloudFoundry deployment"
+      bosh --deployment cf delete-deployment --force
+
+      echo "Deleting configs"
+      bosh configs --json | jq -c '.Tables[].Rows[]' | while read config
+      do
+        bosh --non-interactive \
+          delete-config \
+          --name=$(jq -r '.name' <<< "$config") \
+          --type=$(jq -r '.type' <<< "$config")
+      done
+
+      echo "Deleting BOSH Releases"
+      bosh releases --json | jq -c '.Tables[].Rows[]' | while read release
+      do
+        bosh --non-interactive \
+          delete-release "$(jq -r '.name' <<< "$release")/$(jq -r '.version' <<< "$release")"
+      done
+
+      echo "Running BOSH Cleanup"
+      bosh --non-interactive clean-up

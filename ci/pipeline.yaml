@@ -266,3 +266,6 @@ jobs:
         file: bosh-training-infra/ci/tasks/test-lab1.yaml
       - task: test-lab3
         file: bosh-training-infra/ci/tasks/test-lab3.yaml
+        on_success:
+          task: test-cleanup
+          file: bosh-training-infra/ci/tasks/test-cleanup.yaml

@@ -51,7 +51,6 @@ run:
           --ops-file ../bosh-training-infra/operations/use-cert-diego-api.yml \
           --vars-store cf-deployment-vars.yml \
           --var system_domain=$SYSTEM_DOMAIN
-
       popd
 
       cp lab-bosh-deployment/bosh-deployment-vars.yml env/
