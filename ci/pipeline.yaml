@@ -266,16 +266,18 @@ jobs:
         file: bosh-training-infra/ci/tasks/test-lab1.yaml
       - task: test-lab3
         file: bosh-training-infra/ci/tasks/test-lab3.yaml
+        on_success:
+          task: test-cleanup
+          file: bosh-training-infra/ci/tasks/test-cleanup.yaml
 
   - name: cleanup-test-director
     serial: true
     plan:
       - in_parallel:
           - get: bosh-training-infra
-            trigger: true
-            passed: [test-labs]
+            passed: [create-student-packs]
           - get: student-packs
-            passed: [test-labs]
+            passed: [create-student-packs]
       - task: setup-lab
         file: bosh-training-infra/ci/tasks/setup-lab.yaml
       - task: test-cleanup
