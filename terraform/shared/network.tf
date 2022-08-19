@@ -82,6 +82,15 @@ resource "aws_security_group_rule" "mbus" {
   cidr_blocks       = ["${var.cs_office_ip}/32", "${var.eb_ci_nat_gateway}/32"]
 }
 
+resource "aws_security_group_rule" "cf_api" {
+  security_group_id = aws_security_group.bosh.id
+  type              = "ingress"
+  from_port         = 443
+  to_port           = 443
+  protocol          = "tcp"
+  cidr_blocks       = ["${var.cs_office_ip}/32", "${var.eb_ci_nat_gateway}/32"]
+}
+
 resource "aws_security_group_rule" "uaa" {
   security_group_id = aws_security_group.bosh.id
   type              = "ingress"
