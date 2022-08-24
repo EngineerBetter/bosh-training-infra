@@ -1,0 +1,7 @@
+- type: replace
+  path: /instance_groups/name=api/jobs/name=cloud_controller_ng/properties/cc/security_group_definitions/name=private_networks?
+  value:
+    name: private_networks
+    rules:
+      - destination: 10.244.0.0-10.244.15.255
+        protocol: all
