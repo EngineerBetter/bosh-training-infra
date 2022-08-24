@@ -1,0 +1,4 @@
+- type: replace
+  path: /vm_types/name=massive?
+  value:
+    name: massive

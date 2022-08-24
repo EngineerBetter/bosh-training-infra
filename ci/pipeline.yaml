@@ -51,6 +51,14 @@ resources:
       uri: https://github.com/EngineerBetter/spring-music
       branch: master
 
+  - name: lab-shared-redis-release
+    type: git
+    icon: github
+    check_every: 60m
+    source:
+      uri: https://github.com/EngineerBetter/shared-redis-release
+      branch: master
+
   - name: shared-terraform-state
     type: terraform
     icon: terraform
@@ -260,12 +268,17 @@ jobs:
           - get: lab-bosh-deployment
           - get: lab-cf-deployment
           - get: lab-spring-music
+          - get: lab-shared-redis-release
       - task: setup-lab
         file: bosh-training-infra/ci/tasks/setup-lab.yaml
       - task: test-lab1
         file: bosh-training-infra/ci/tasks/test-lab1.yaml
       - task: test-lab3
         file: bosh-training-infra/ci/tasks/test-lab3.yaml
+      - task: test-lab4
+        file: bosh-training-infra/ci/tasks/test-lab4.yaml
+        params:
+          SHARED_REDIS_SHA: af48020
 
   - name: cleanup-test-director
     serial: true

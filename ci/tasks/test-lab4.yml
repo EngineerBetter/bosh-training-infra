@@ -1,0 +1,85 @@
+platform: linux
+
+image_resource:
+  type: registry-image
+  source: { repository: engineerbetter/pcf-ops }
+
+inputs:
+  - name: bosh-training-infra
+  - name: env
+  - name: lab-bosh-deployment
+  - name: lab-cf-deployment
+  - name: lab-shared-redis-release
+
+outputs:
+  - name: env
+
+params:
+  SHARED_REDIS_SHA:
+
+run:
+  path: bash
+  args:
+    - -euo
+    - pipefail
+    - -c
+    - |
+      pushd env
+        eval "$(cat bosh_env_vars)"
+      popd
+      bosh env
+
+      echo "Push an app to Cloud Foundry"
+      SYSTEM_DOMAIN=$BOSH_ENVIRONMENT.sslip.io
+      cf login \
+        -a https://api.$SYSTEM_DOMAIN \
+        -u admin \
+        -p $(bosh interpolate env/cf-deployment-vars.yml --path /cf_admin_password) \
+        -o dev \
+        -s dev \
+        --skip-ssl-validation
+
+      pushd lab-shared-redis-release
+        git checkout "$SHARED_REDIS_SHA"
+        git submodule update --init --recursive
+
+        echo "Create a BOSH release"
+        bosh create-release
+
+        echo "Upload specified stemcell"
+        STEMCELL_VERSION=$(bosh interpolate manifest/vars-lite.yml --path '/stemcell_version')
+        echo "STEMCELL_VERSION: ${STEMCELL_VERSION}"
+        bosh upload-stemcell \
+          "https://bosh.io/d/stemcells/bosh-warden-boshlite-ubuntu-bionic-go_agent?v=$STEMCELL_VERSION"
+
+        echo "Upload the dev shared-redis-release to BOSH"
+        bosh upload-release
+
+        echo "Add massive vm_type to cloud-config"
+        bosh update-cloud-config <(bosh cloud-config) \
+          --ops-file ../bosh-training-infra/operations/add-massive-vm-type.yml
+
+        echo "Deploy shared-redis-release"
+        bosh --deployment cf-redis \
+          deploy manifest/deployment.yml \
+          --vars-file manifest/vars-lite.yml \
+          --vars-file ../lab-cf-deployment/deployment-vars.yml \
+          --var system_domain=$SYSTEM_DOMAIN \
+          --var apps_domain=$SYSTEM_DOMAIN \
+          --var cf_password=$(bosh interpolate ../lab-cf-deployment/deployment-vars.yml --path=/cf_admin_password)
+      popd
+
+      bosh --deployment cf-redis vms
+      bosh --deployment cf-redis errands
+
+      echo "Run broker-registrar errand"
+      bosh --deployment cf-redis run-errand broker-registrar
+
+      echo "Using the Redis Service"
+      cf martketplace
+      cf create-service p-redis shared-vm my-redis -b cf-redis-broker
+      cf services
+
+      echo "Bind the redis service to your app"
+      cf bind-service my-app my-redis
+      cf restage my-app
