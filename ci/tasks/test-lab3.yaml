@@ -54,6 +54,9 @@ run:
           --ops-file operations/use-compiled-releases.yml \
           --ops-file ../bosh-training-infra/operations/use-cert-diego-api.yml \
           --ops-file ../bosh-training-infra/operations/lab3-diego-cell-scale-up.yml \
+          --ops-file ../bosh-training-infra/operations/add-redis-asg-definitions.yml \
           --vars-store cf-deployment-vars.yml \
           --var system_domain=$SYSTEM_DOMAIN
       popd
+
+      cp lab-cf-deployment/cf-deployment-vars.yml env/

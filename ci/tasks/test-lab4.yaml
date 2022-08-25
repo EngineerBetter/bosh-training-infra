@@ -28,6 +28,7 @@ run:
         eval "$(cat bosh_env_vars)"
       popd
       bosh env
+      cp env/cf-deployment-vars.yml lab-cf-deployment/
 
       echo "Push an app to Cloud Foundry"
       SYSTEM_DOMAIN=$BOSH_ENVIRONMENT.sslip.io
@@ -38,6 +39,8 @@ run:
         -o dev \
         -s dev \
         --skip-ssl-validation
+
+      cf bind-running-security-group private_networks
 
       pushd lab-shared-redis-release
         git checkout "$SHARED_REDIS_SHA"
@@ -56,17 +59,17 @@ run:
         bosh upload-release
 
         echo "Add massive vm_type to cloud-config"
-        bosh update-cloud-config <(bosh cloud-config) \
+        bosh --non-interactive update-cloud-config <(bosh cloud-config) \
           --ops-file ../bosh-training-infra/operations/add-massive-vm-type.yml
 
         echo "Deploy shared-redis-release"
-        bosh --deployment cf-redis \
+        bosh --non-interactive --deployment cf-redis \
           deploy manifest/deployment.yml \
           --vars-file manifest/vars-lite.yml \
-          --vars-file ../lab-cf-deployment/deployment-vars.yml \
+          --vars-file ../lab-cf-deployment/cf-deployment-vars.yml \
           --var system_domain=$SYSTEM_DOMAIN \
           --var apps_domain=$SYSTEM_DOMAIN \
-          --var cf_password=$(bosh interpolate ../lab-cf-deployment/deployment-vars.yml --path=/cf_admin_password)
+          --var cf_password=$(bosh interpolate ../lab-cf-deployment/cf-deployment-vars.yml --path=/cf_admin_password)
       popd
 
       bosh --deployment cf-redis vms
@@ -76,7 +79,7 @@ run:
       bosh --deployment cf-redis run-errand broker-registrar
 
       echo "Using the Redis Service"
-      cf martketplace
+      cf marketplace
       cf create-service p-redis shared-vm my-redis -b cf-redis-broker
       cf services
 

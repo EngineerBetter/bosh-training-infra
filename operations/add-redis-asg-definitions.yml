@@ -5,3 +5,7 @@
     rules:
       - destination: 10.244.0.0-10.244.15.255
         protocol: all
+
+- type: replace
+  path: /instance_groups/name=api/jobs/name=cloud_controller_ng/properties/cc/default_running_security_groups/-
+  value: private_networks
