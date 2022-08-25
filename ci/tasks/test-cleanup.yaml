@@ -36,7 +36,7 @@ run:
       bosh releases --json | jq -c '.Tables[].Rows[]' | while read release
       do
         bosh --non-interactive \
-          delete-release "$(jq -r '.name' <<< "$release")/$(jq -r '.version' <<< "$release")"
+          delete-release "$(jq -r '.name' <<< "$release")/$(jq -r '.version | sub("\\*"; "")' <<< "$release")"
       done
 
       echo "Running BOSH Cleanup"
