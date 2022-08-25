@@ -59,7 +59,7 @@ run:
 
           if [ -n "$(jq --arg STUDENT_NAME "$changed_student" '.students[] | select(.name==$STUDENT_NAME)' students-terraform-state/metadata)" ]
           then
-            jq --arg STUDENT_NAME "$changed_student" '.students[] | select(.name==$STUDENT_NAME)' students-terraform-state/metadata | while read student; do
+            jq -c --arg STUDENT_NAME "$changed_student" '.students[] | select(.name==$STUDENT_NAME)' students-terraform-state/metadata | while read student; do
               bosh delete-env bosh-deployment/bosh.yml \
                 --vars-store="director-states/creds-$( jq -r '.name' <<< "$student" ).yml" \
                 --state="director-states/state-$( jq -r '.name' <<< "$student" ).json" \
