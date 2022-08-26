@@ -53,7 +53,7 @@ run:
       for changed_student in $(echo $changed_students)
       do
         echo "checking student: ${changed_student}"
-        if [ -f "director-states/state-${changed_student}.json" ]
+        if [ -f "director-states/state-${changed_student}.json" ] || [ -f "director-states/creds-${changed_student}.yml" ]
         then
           echo "BOSH Environment for student: ${changed_student}, should be deleted"
 
@@ -85,11 +85,10 @@ run:
                 --var subnet_id="$( jq -r '.subnet_id' <<< "$student" )" \
                 --var external_ip="$( jq -r '.external_ip' <<< "$student" )"
             done
-          else
-            echo "Unable to locate environment information for student: ${changed_student} in students terraform state"
-            echo "Deleting creds and state files from director-states for student: ${changed_student}"
-            [ -e "director-states/creds-${changed_student}.yml" ] && rm -f "director-states/creds-${changed_student}.yml"
-            [ -e "director-states/state-${changed_student}.json" ] && rm -f "director-states/state-${changed_student}.json"
           fi
+          echo "Unable to locate environment information for student: ${changed_student} in students terraform state"
+          echo "Deleting creds and state files from director-states for student: ${changed_student}"
+          [ -e "director-states/creds-${changed_student}.yml" ] && rm -f "director-states/creds-${changed_student}.yml"
+          [ -e "director-states/state-${changed_student}.json" ] && rm -f "director-states/state-${changed_student}.json"
         fi
       done
