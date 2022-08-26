@@ -18,6 +18,7 @@ run:
     - pipefail
     - -c
     - |
+      touch creds-null.yml state-null.json
       tar \
         --gzip \
         --verbose \
