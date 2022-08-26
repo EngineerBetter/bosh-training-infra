@@ -140,6 +140,7 @@ jobs:
 
   - name: delete-student-envs
     serial: true
+    serial_groups: [bosh-director]
     plan:
       - in_parallel:
           - get: bosh-training-infra
@@ -201,6 +202,7 @@ jobs:
 
   - name: create-student-envs
     serial: true
+    serial_groups: [bosh-director]
     plan:
       - in_parallel:
           - get: bosh-deployment
