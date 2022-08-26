@@ -86,9 +86,7 @@ run:
                 --var external_ip="$( jq -r '.external_ip' <<< "$student" )"
             done
           fi
-          echo "Unable to locate environment information for student: ${changed_student} in students terraform state"
-          echo "Deleting creds and state files from director-states for student: ${changed_student}"
-          [ -e "director-states/creds-${changed_student}.yml" ] && rm -f "director-states/creds-${changed_student}.yml"
-          [ -e "director-states/state-${changed_student}.json" ] && rm -f "director-states/state-${changed_student}.json"
+          [ -e "director-states/creds-${changed_student}.yml" ] && rm -f "director-states/creds-${changed_student}.yml" || true
+          [ -e "director-states/state-${changed_student}.json" ] && rm -f "director-states/state-${changed_student}.json" || true
         fi
       done

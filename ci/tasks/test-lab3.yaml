@@ -47,7 +47,6 @@ run:
       pushd lab-cf-deployment
         git checkout tags/v21.4.0
 
-        SYSTEM_DOMAIN=$BOSH_ENVIRONMENT.sslip.io
         bosh --deployment cf deploy cf-deployment.yml \
           --non-interactive \
           --ops-file operations/bosh-lite.yml \
