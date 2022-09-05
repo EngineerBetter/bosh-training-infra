@@ -40,7 +40,9 @@ run:
         -s dev \
         --skip-ssl-validation
 
+      cf running-security-groups
       cf bind-running-security-group private_networks
+      cf running-security-groups
 
       pushd lab-shared-redis-release
         git checkout "$SHARED_REDIS_SHA"
