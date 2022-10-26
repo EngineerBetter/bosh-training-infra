@@ -241,9 +241,7 @@ jobs:
             trigger: true
             passed: [create-student-envs]
           - get: director-states
-            passed: [create-student-envs]
-            params:
-              unpack: true
+            params: { unpack: true }
           - get: shared-terraform-state
           - get: students-terraform-state
           - get: student-packs
