@@ -212,7 +212,6 @@ jobs:
           - get: students-terraform-state
           - get: shared-terraform-state
           - get: director-states
-            passed: [delete-student-envs]
             params: { unpack: true }
       - load_var: shared-terraform-outputs
         file: shared-terraform-state/metadata
@@ -246,9 +245,7 @@ jobs:
             params:
               unpack: true
           - get: shared-terraform-state
-            passed: [create-student-envs]
           - get: students-terraform-state
-            passed: [create-student-envs]
           - get: student-packs
       - load_var: shared-terraform-outputs
         file: shared-terraform-state/metadata
@@ -266,7 +263,6 @@ jobs:
           - get: bosh-training-infra
             passed: [create-student-packs]
           - get: student-packs
-            passed: [create-student-packs]
           - get: lab-bosh-deployment
           - get: lab-cf-deployment
           - get: lab-spring-music
@@ -289,7 +285,6 @@ jobs:
           - get: bosh-training-infra
             passed: [create-student-packs]
           - get: student-packs
-            passed: [create-student-packs]
       - task: setup-lab
         file: bosh-training-infra/ci/tasks/setup-lab.yaml
       - task: test-cleanup
