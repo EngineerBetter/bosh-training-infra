@@ -32,7 +32,7 @@ resource "aws_security_group_rule" "ingress_ssh" {
 resource "aws_security_group_rule" "ingress_cf_api" {
   for_each = local.security_group_cidrs
 
-  security_group_id = var.security_group_id
+  security_group_id = aws_security_group.students[each.key].id
   type              = "ingress"
   protocol          = "tcp"
   from_port         = 443
@@ -43,7 +43,7 @@ resource "aws_security_group_rule" "ingress_cf_api" {
 resource "aws_security_group_rule" "ingress_agent" {
   for_each = local.security_group_cidrs
 
-  security_group_id = var.security_group_id
+  security_group_id = aws_security_group.students[each.key].id
   type              = "ingress"
   protocol          = "tcp"
   from_port         = 6868
@@ -54,7 +54,7 @@ resource "aws_security_group_rule" "ingress_agent" {
 resource "aws_security_group_rule" "ingress_uaa" {
   for_each = local.security_group_cidrs
 
-  security_group_id = var.security_group_id
+  security_group_id = aws_security_group.students[each.key].id
   type              = "ingress"
   protocol          = "tcp"
   from_port         = 8443
@@ -66,7 +66,7 @@ resource "aws_security_group_rule" "ingress_uaa" {
 resource "aws_security_group_rule" "ingress_lab_application" {
   for_each = local.security_group_cidrs
 
-  security_group_id = var.security_group_id
+  security_group_id = aws_security_group.students[each.key].id
   type              = "ingress"
   protocol          = "tcp"
   from_port         = 9090
@@ -77,7 +77,7 @@ resource "aws_security_group_rule" "ingress_lab_application" {
 resource "aws_security_group_rule" "ingress_director" {
   for_each = local.security_group_cidrs
 
-  security_group_id = var.security_group_id
+  security_group_id = aws_security_group.students[each.key].id
   type              = "ingress"
   protocol          = "tcp"
   from_port         = 25555
