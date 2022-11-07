@@ -23,7 +23,6 @@ resource "aws_security_group_rule" "ingress_ssh" {
   from_port         = 22
   to_port           = 22
   cidr_blocks       = each.value
-  count             = length(each.value) == 0 ? 0 : 1
 }
 
 resource "aws_security_group_rule" "ingress_cf_api" {
@@ -35,7 +34,6 @@ resource "aws_security_group_rule" "ingress_cf_api" {
   from_port         = 443
   to_port           = 443
   cidr_blocks       = each.value
-  count             = length(each.value) == 0 ? 0 : 1
 }
 
 resource "aws_security_group_rule" "ingress_agent" {
@@ -47,7 +45,6 @@ resource "aws_security_group_rule" "ingress_agent" {
   from_port         = 6868
   to_port           = 6868
   cidr_blocks       = each.value
-  count             = length(each.value) == 0 ? 0 : 1
 }
 
 resource "aws_security_group_rule" "ingress_uaa" {
@@ -59,7 +56,6 @@ resource "aws_security_group_rule" "ingress_uaa" {
   from_port         = 8443
   to_port           = 8444
   cidr_blocks       = each.value
-  count             = length(each.value) == 0 ? 0 : 1
 }
 
 
@@ -72,7 +68,6 @@ resource "aws_security_group_rule" "ingress_lab_application" {
   from_port         = 9090
   to_port           = 9090
   cidr_blocks       = each.value
-  count             = length(each.value) == 0 ? 0 : 1
 }
 
 resource "aws_security_group_rule" "ingress_director" {
@@ -84,7 +79,6 @@ resource "aws_security_group_rule" "ingress_director" {
   from_port         = 25555
   to_port           = 25555
   cidr_blocks       = each.value
-  count             = length(each.value) == 0 ? 0 : 1
 }
 
 resource "aws_subnet" "students" {
