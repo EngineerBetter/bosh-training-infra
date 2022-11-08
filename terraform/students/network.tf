@@ -16,6 +16,10 @@ resource "aws_security_group" "students" {
 
   name   = each.key
   vpc_id = data.aws_vpc.main.id
+
+  tags = {
+    Name = "${each.key}-training"
+  }
 }
 
 resource "aws_security_group_rule" "ingress_ssh" {
