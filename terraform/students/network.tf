@@ -23,7 +23,7 @@ resource "aws_security_group" "students" {
 resource "aws_security_group_rule" "ingress_ssh" {
   for_each = local.students
 
-  security_group_id = aws_security_group.students[each.key].id
+  security_group_id = aws_security_group.students[each.key]
   type              = "ingress"
   protocol          = "tcp"
   from_port         = 22
@@ -32,14 +32,13 @@ resource "aws_security_group_rule" "ingress_ssh" {
 }
 
 resource "aws_security_group_rule" "ingress_cf_api" {
-  for_each = local.students
-
-  security_group_id = aws_security_group.students[each.key].id
+  security_group_id = var.security_group_id
   type              = "ingress"
   protocol          = "tcp"
   from_port         = 443
   to_port           = 443
-  cidr_blocks       = each.value
+  cidr_blocks       = local.student_ips
+  count             = length(local.student_ips) == 0 ? 0 : 1
 }
 
 resource "aws_security_group_rule" "ingress_agent" {
