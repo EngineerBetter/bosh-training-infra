@@ -7,8 +7,8 @@ data "aws_security_group" "main" {
 }
 
 locals {
-  students    = { for student in var.students : student.name => toset([for ip in student.ips : "${ip}/32"]) }
-  student_ips = toset(flatten([for student in var.students : [for ip in student.ips : "${ip}/32"]]))
+  students = { for student in var.students : student.name => toset([for ip in student.ips : "${ip}/32"]) }
+  student_ips  = toset(flatten([for student in var.students : [for ip in student.ips : "${ip}/32"]]))
 }
 
 resource "aws_security_group" "students" {
@@ -29,6 +29,8 @@ resource "aws_security_group_rule" "ingress_ssh" {
   from_port         = 22
   to_port           = 22
   cidr_blocks       = each.value
+
+  tags = { "Name" = "ingress_ssh" }
 }
 
 resource "aws_security_group_rule" "ingress_cf_api" {
