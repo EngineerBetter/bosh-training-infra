@@ -8,6 +8,6 @@ output "students" {
     internal_ip             = cidrhost(aws_subnet.students[student.name].cidr_block, 6)
     region                  = var.region
     az                      = var.availability_zone
-    default_security_groups = "[${data.aws_security_group.main.name}]"
+    default_security_groups = "[${aws_security_group.students[each.name].name},${data.aws_security_group.main.name}]"
   }]
 }

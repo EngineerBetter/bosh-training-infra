@@ -21,3 +21,7 @@ terraform {
     }
   }
 }
+
+locals {
+  students = { for student in var.students : student.name => [for ip in student.ips : "${ip}/32"] }
+}
