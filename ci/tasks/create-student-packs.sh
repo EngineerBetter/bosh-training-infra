@@ -3,6 +3,7 @@ set -euo
 
 linux_env_filename=bosh_env_vars
 windows_env_filename=${linux_env_filename}.bat
+fish_env_filename=${linux_env_filename}.fish
 
 mkdir -p student-packs/student-packs
 cp bosh-training-infra/student-packs/README.md ./
@@ -31,5 +32,14 @@ jq -c '.students[]' students-terraform-state/metadata | while read student; do
 		set BOSH_GW_USER="vcap"
 		set BOSH_GW_PRIVATE_KEY="\${PWD}/bosh-key.pem"
 		EOF
-tar -zcvf student-packs/student-packs/${student_name}.tgz bosh-key.pem $linux_env_filename $windows_env_filename README.md
+	
+	cat <<-EOF > $fish_env_filename
+		set -x BOSH_CLIENT admin
+		set -x BOSH_CLIENT_SECRET "$(bosh interpolate director-states/creds-${student_name}.yml --path=/admin_password)"
+		set -x BOSH_ENVIRONMENT "${student_ip}"
+		set -x BOSH_CA_CERT="$(bosh interpolate director-states/creds-${student_name}.yml --path=/director_ssl/ca)"
+		set -x BOSH_GW_USER vcap
+		set -x BOSH_GW_PRIVATE_KEY "\${PWD}/bosh-key.pem"
+		EOF
+tar -zcvf student-packs/student-packs/${student_name}.tgz bosh-key.pem $linux_env_filename $windows_env_filename $fish_env_filename README.md
 done
