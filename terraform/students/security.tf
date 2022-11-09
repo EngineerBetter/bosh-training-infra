@@ -23,6 +23,16 @@ resource "aws_security_group_rule" "ingress_cf_ssh" {
   security_group_id = aws_security_group.students[each.key].id
   type              = "ingress"
   protocol          = "tcp"
+  from_port         = 80
+  to_port           = 80
+  cidr_blocks       = each.value
+}
+
+resource "aws_security_group_rule" "ingress_cf_ssh" {
+  for_each          = local.students
+  security_group_id = aws_security_group.students[each.key].id
+  type              = "ingress"
+  protocol          = "tcp"
   from_port         = 2222
   to_port           = 2222
   cidr_blocks       = each.value
