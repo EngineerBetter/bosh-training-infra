@@ -18,7 +18,7 @@ resource "aws_security_group_rule" "ingress_ssh" {
   cidr_blocks       = each.value
 }
 
-resource "aws_security_group_rule" "ingress_cf_ssh" {
+resource "aws_security_group_rule" "ingress_cf_http" {
   for_each          = local.students
   security_group_id = aws_security_group.students[each.key].id
   type              = "ingress"
