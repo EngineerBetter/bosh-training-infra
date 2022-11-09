@@ -8,12 +8,17 @@ resource "aws_subnet" "students" {
   cidr_block              = each.value
   availability_zone       = var.availability_zone
   map_public_ip_on_launch = true
+
   tags = {
-    Name = "bosh-training-${each.key}"
+    Environment = each.key
   }
 }
 
 resource "aws_eip" "students" {
   for_each = aws_subnet.students
   vpc      = true
+
+  tags = {
+    Environment = each.key
+  }
 }

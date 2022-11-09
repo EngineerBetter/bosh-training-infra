@@ -3,8 +3,8 @@ provider "aws" {
 
   default_tags {
     tags = {
-      Name        = "bosh-training"
-      Environment = "bosh-training"
+      Purpose   = "bosh-training"
+      ManagedBy = "terraform"
     }
   }
 }

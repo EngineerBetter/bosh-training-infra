@@ -6,6 +6,10 @@ resource "aws_security_group" "students" {
   for_each = local.students
   name     = each.key
   vpc_id   = var.vpc_id
+
+  tags = {
+    Environment = each.key
+  }
 }
 
 resource "aws_security_group_rule" "ingress_ssh" {
