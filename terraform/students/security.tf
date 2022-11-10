@@ -82,6 +82,16 @@ resource "aws_security_group_rule" "ingress_lab_application" {
   cidr_blocks       = each.value
 }
 
+resource "aws_security_group_rule" "ingress_lab_minio" {
+  for_each          = local.students
+  security_group_id = aws_security_group.students[each.key].id
+  type              = "ingress"
+  protocol          = "tcp"
+  from_port         = 9000
+  to_port           = 9000
+  cidr_blocks       = each.value
+}
+
 resource "aws_security_group_rule" "ingress_director" {
   for_each          = local.students
   security_group_id = aws_security_group.students[each.key].id
